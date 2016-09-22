@@ -92,8 +92,3 @@ if __name__ == '__main__':
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
 
-    plot_gradient_descent(objective_f, previous_values)
-
-
-    print gradient_f(initial_guess)
-    print calculate_gradient_numerically(objective_f, 6, 8, 0.2)
