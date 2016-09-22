@@ -1,4 +1,5 @@
 from loadParametersP1 import getData
+from loadFittingDataP1 import getFittingData
 import matplotlib.pyplot as plt
 import numpy
 import math
@@ -71,6 +72,20 @@ def calculate_gradient_numerically(f, x, y, delta):
     x_slope = (f(x_new) - f(original))/delta
     y_slope = (f(y_new) - f(original))/delta
     return (x_slope, y_slope)
+
+def least_square_error(theta):
+    fitting_data = getFittingData()
+    x_matrix = fitting_data[0]
+    y_vector = fitting_data[1]
+    length = y_vector.length
+    sum = 0
+    for i in range(length):
+        x_transposed = numpy.matrix.transpose(x_matrix[i])
+        partial_sum = numpy.dot(x_transposed, theta) - y_vector[i]
+        partial_sum_squared = partial_sum^2
+        sum = sum +partial_sum_squared
+
+    return sum
 
 
 if __name__ == '__main__':
