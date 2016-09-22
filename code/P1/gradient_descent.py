@@ -55,19 +55,20 @@ def calculate_gradient_numerically(f, x, y, delta):
 
 if __name__ == '__main__':
     parameters = getData()
-    initial_guess = numpy.array([6, 8])
+    initial_guess = numpy.array([10, 10])
     step_size = 0.1
     threshold = 0.01
 
-    # gaussian_mean = parameters[0]
-    # gaussian_cov = parameters[1]
-    # negative_gaussian = make_negative_gaussian(gaussian_mean, gaussian_cov)
-    # negative_gaussian_derivative = make_negative_gaussian_derivative(negative_gaussian, gaussian_mean, gaussian_cov)
+    gaussian_mean = parameters[0]
+    gaussian_cov = parameters[1]
+    negative_gaussian = make_negative_gaussian(gaussian_mean, gaussian_cov)
+    negative_gaussian_derivative = make_negative_gaussian_derivative(negative_gaussian, gaussian_mean, gaussian_cov)
 
     quadratic_bowl = make_quadratic_bowl(parameters[2], parameters[3])
     quadratic_bowl_derivative = make_quadratic_bowl_derivative(parameters[2], parameters[3])
-    print quadratic_bowl_derivative(initial_guess)
-    print calculate_gradient_numerically(quadratic_bowl, 6, 8, 0.2) 
+    # print negative_gaussian_derivative(initial_guess)
+    # print calculate_gradient_numerically(negative_gaussian, 0, 0, 0.01) 
+    print negative_gaussian(initial_guess)
 
 
     # min_x, min_y = gradient_descent(negative_gaussian, negative_gaussian_derivative, initial_guess, step_size, threshold)
