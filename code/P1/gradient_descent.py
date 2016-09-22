@@ -23,17 +23,19 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
 
 def make_negative_gaussian(mean, covariance):
     def negative_gaussian(x):
-        return -1/math.sqrt((2*math.pi)**n * abs(covariance)) * math.exp(-1/2. * numpy.matrix.transpose(x-mean) / covariance * (x-mean))
+        n = 2
+        exponential_part = math.exp(-1/2. * numpy.dot(numpy.dot(numpy.matrix.transpose(x-mean), numpy.linalg.inv(covariance)), (x-mean)))
+        return -1/numpy.sqrt((2*math.pi)**n * numpy.linalg.norm(covariance)) * exponential_part
     return negative_gaussian
 
 def make_negative_gaussian_derivative(negative_gaussian, mean, covariance):
     def negative_gaussian_derivative(x):
-        return -negative_gaussian(x) / covariance * (x-mean)
+        return numpy.dot(numpy.dot(-negative_gaussian(x), numpy.linalg.inv(covariance)), x-mean)
     return negative_gaussian_derivative
 
 def make_quadratic_bowl(A, b):
     def quadratic_bowl(x):
-        y = (1/2)* numpy.dot(numpy.dot(numpy.matrix.transpose(x), A), x) - numpy.dot(numpy.matrix.transpose(x), b)
+        y = (1/2.)* numpy.dot(numpy.dot(numpy.matrix.transpose(x), A), x) - numpy.dot(numpy.matrix.transpose(x), b)
         return y
     return quadratic_bowl
 
@@ -44,19 +46,18 @@ def make_quadratic_bowl_derivative(A, b):
 
 if __name__ == '__main__':
     parameters = getData()
-    print parameters
-    # print "mean: ", parameters[0][0]
-    # print "cov: ", abs(parameters[1])
+    initial_guess = numpy.array([0, 0])
+    step_size = 0.1
+    threshold = 0.01
 
-    # gaussian_mean = parameters[0]
-    # gaussian_cov = parameters[1]
-    # negative_gaussian = make_negative_gaussian(gaussian_mean, parameters[1])
-    # negative_gaussian_derivative = make_negative_gaussian_derivative(par)
+    gaussian_mean = parameters[0]
+    gaussian_cov = parameters[1]
+    negative_gaussian = make_negative_gaussian(gaussian_mean, gaussian_cov)
+    negative_gaussian_derivative = make_negative_gaussian_derivative(negative_gaussian, gaussian_mean, gaussian_cov)
 
     quadratic_bowl = make_quadratic_bowl(parameters[2], parameters[3])
     quadratic_bowl_derivative = make_quadratic_bowl_derivative(parameters[2], parameters[3])
 
-
-    min_x, min_y = gradient_descent(quadratic_bowl, quadratic_bowl_derivative, numpy.array([0, 0]), 0.1, 0.01)
-    print "min_x: ", min_x, "   min_y",  min_y
+    min_x, min_y = gradient_descent(negative_gaussian, negative_gaussian_derivative, initial_guess, step_size, threshold)
+    print "min_x: ", min_x, "  min_y",  min_y
 
