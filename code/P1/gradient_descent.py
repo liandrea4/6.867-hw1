@@ -64,6 +64,15 @@ def make_quadratic_bowl_derivative(A, b):
         return numpy.dot(A, x) - b
     return quadratic_bowl_derivative
 
+def calculate_gradient_numerically(f, x, y, delta):
+    original = numpy.array([x,y])
+    x_new = numpy.array([(x+delta), y])
+    y_new = numpy.array([x, (y+delta)])
+    x_slope = (f(x_new) - f(original))/delta
+    y_slope = (f(y_new) - f(original))/delta
+    return (x_slope, y_slope)
+
+
 if __name__ == '__main__':
     parameters = getData()
     initial_guess = numpy.array([40, 40])
@@ -85,3 +94,6 @@ if __name__ == '__main__':
 
     plot_gradient_descent(objective_f, previous_values)
 
+
+    print gradient_f(initial_guess)
+    print calculate_gradient_numerically(objective_f, 6, 8, 0.2)
