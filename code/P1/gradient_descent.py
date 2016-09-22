@@ -1,41 +1,61 @@
 from loadParametersP1 import getData
+import matplotlib.pyplot as plt
 import numpy
 import math
 
 def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
-    old_x = x0
-    old_y = objective_f(x0)
+    previous_values = [(x0, objective_f(x0))]
     difference = threshold + 1
 
-    print "difference: ", difference, "   threshold: ", threshold
-    print "old_x: ", old_x, "old_y: ", old_y
     while abs(difference) > threshold:
-        new_x = old_x - step_size * gradient_f(old_x)
+        old_x = previous_values[-1][0]
+        old_y = previous_values[-1][1]
+        new_x = old_x - (step_size * gradient_f(old_x))
         new_y = objective_f(new_x)
-        print "gradient: ", gradient_f(old_x)
-        print "new_x: ", new_x, "  new_y: ", new_y
         difference = old_y - new_y
-        print "difference: ", difference
-        old_x = new_x
-        old_y = new_y
+        previous_values.append((new_x, new_y))
 
-    return (old_x, old_y)
+    return previous_values
+
+def plot_gradient_descent(objective_f, previous_values):
+    fig, ax = plt.subplots()
+
+    gradient_descent_x = [ value[0][0] for value in previous_values ]
+    gradient_descent_y = [ value[1] for value in previous_values ]
+    labels = range(1, len(previous_values) + 1)
+    plt.plot(gradient_descent_x, gradient_descent_y, 'ro')
+    # for i, label in enumerate(labels):
+    #     # if i > 5:
+    #     #     break
+    #     ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
+
+
+
+    objective_x = numpy.arange(-50, 50, 0.1)
+    # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
+    objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
+    plt.plot(objective_x, objective_y, 'b-')
+
+
+    plt.show()
+
+##### Gradient descent testing functions #######
 
 def make_negative_gaussian(mean, covariance):
     def negative_gaussian(x):
         n = 2
-        exponential_part = math.exp(-1/2. * numpy.dot(numpy.dot(numpy.matrix.transpose(x-mean), numpy.linalg.inv(covariance)), (x-mean)))
-        return -1/numpy.sqrt((2*math.pi)**n * numpy.linalg.norm(covariance)) * exponential_part
+        exponential_part = numpy.exp(-1/2. * numpy.dot(numpy.dot(numpy.matrix.transpose(x-mean), numpy.linalg.inv(covariance)), (x-mean)))
+        return -1./numpy.sqrt((2*numpy.pi)**n * numpy.linalg.det(covariance)) * exponential_part
     return negative_gaussian
 
 def make_negative_gaussian_derivative(negative_gaussian, mean, covariance):
     def negative_gaussian_derivative(x):
-        return numpy.dot(numpy.dot(-negative_gaussian(x), numpy.linalg.inv(covariance)), x-mean)
+        return numpy.dot(numpy.dot(-negative_gaussian(x), numpy.linalg.inv(covariance)), (x-mean))
     return negative_gaussian_derivative
 
 def make_quadratic_bowl(A, b):
     def quadratic_bowl(x):
-        y = (1/2.)* numpy.dot(numpy.dot(numpy.matrix.transpose(x), A), x) - numpy.dot(numpy.matrix.transpose(x), b)
+        y = (1/2.) * numpy.dot(numpy.dot(numpy.matrix.transpose(x), A), x) - numpy.dot(numpy.matrix.transpose(x), b)
         return y
     return quadratic_bowl
 
@@ -46,18 +66,22 @@ def make_quadratic_bowl_derivative(A, b):
 
 if __name__ == '__main__':
     parameters = getData()
-    initial_guess = numpy.array([0, 0])
-    step_size = 0.1
-    threshold = 0.01
+    initial_guess = numpy.array([40, 40])
+    step_size = 100000
+    threshold = 0.0000000005
 
     gaussian_mean = parameters[0]
     gaussian_cov = parameters[1]
-    negative_gaussian = make_negative_gaussian(gaussian_mean, gaussian_cov)
-    negative_gaussian_derivative = make_negative_gaussian_derivative(negative_gaussian, gaussian_mean, gaussian_cov)
+    objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
+    gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
 
-    quadratic_bowl = make_quadratic_bowl(parameters[2], parameters[3])
-    quadratic_bowl_derivative = make_quadratic_bowl_derivative(parameters[2], parameters[3])
+    # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
+    # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
 
-    min_x, min_y = gradient_descent(negative_gaussian, negative_gaussian_derivative, initial_guess, step_size, threshold)
+    previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
     print "min_x: ", min_x, "  min_y",  min_y
+    print "number of steps: ", len(previous_values)
+
+    plot_gradient_descent(objective_f, previous_values)
 
