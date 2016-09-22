@@ -1,8 +1,6 @@
-from loadParametersP1 import getData
-from loadFittingDataP1 import getFittingData
-import matplotlib.pyplot as plt
+from loadParametersP1           import getData
+import matplotlib.pyplot        as plt
 import numpy
-import math
 
 def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     previous_values = [(x0, objective_f(x0))]
@@ -11,6 +9,7 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     while abs(difference) > threshold:
         old_x = previous_values[-1][0]
         old_y = previous_values[-1][1]
+        print "gradient: ", gradient_f(old_x)
         new_x = old_x - (step_size * gradient_f(old_x))
         new_y = objective_f(new_x)
         difference = old_y - new_y
@@ -73,39 +72,6 @@ def calculate_gradient_numerically(f, x, y, delta):
     x_slope = (f(x_new) - f(original))/delta
     y_slope = (f(y_new) - f(original))/delta
     return (x_slope, y_slope)
-
-def least_square_error(theta):
-    fitting_data = getFittingData()
-    x_matrix = fitting_data[0]
-    y_vector = fitting_data[1]
-    length = y_vector.length
-    sum = 0
-    for i in range(length):
-        x_transposed = numpy.matrix.transpose(x_matrix[i])
-        partial_sum = numpy.dot(x_transposed, theta) - y_vector[i]
-        partial_sum_squared = partial_sum^2
-        sum = sum +partial_sum_squared
-
-    return sum
-
-
-####### Least squares error ########
-
-def make_least_square_derivative(x, y):
-    def least_square_derivative(theta):
-        scaling_factor = 0
-        for i in range(len(y)):
-            scaling_factor += numpy.dot(numpy.matrix.transpose(x[i]), theta) - y[i]
-        scaling_factor *= 2
-        return numpy.dot(scaling_factor, numpy.matrix.transpose(x[i]))
-    return least_square_derivative
-
-####### SGD update ##########
-def calc_next_theta(old_theta, x, y):
-    n = 2
-    return old_theta - numpy.dot(2 * n, numpy.dot(numpy.matrix.transpose(x[i]), old_theta) - y[i])
-
-def sgd(x, y, next_theta_f, threshold):
 
 
 if __name__ == '__main__':
