@@ -8,10 +8,14 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     difference = threshold + 1
 
     print "difference: ", difference, "   threshold: ", threshold
-    while difference > threshold:
+    print "old_x: ", old_x, "old_y: ", old_y
+    while abs(difference) > threshold:
         new_x = old_x - step_size * gradient_f(old_x)
         new_y = objective_f(new_x)
+        print "gradient: ", gradient_f(old_x)
+        print "new_x: ", new_x, "  new_y: ", new_y
         difference = old_y - new_y
+        print "difference: ", difference
         old_x = new_x
         old_y = new_y
 
@@ -29,16 +33,13 @@ def make_negative_gaussian_derivative(negative_gaussian, mean, covariance):
 
 def make_quadratic_bowl(A, b):
     def quadratic_bowl(x):
-        y = (1/2)*numpy.matrix.transpose(x)*A*x - numpy.matrix.transpose(x)*b
-        print "y: ", y
-        print "first part: ", numpy.matrix.transpose(x), A, x
-        print "second part: ", numpy.matrix.transpose(x)*b
+        y = (1/2)* numpy.dot(numpy.dot(numpy.matrix.transpose(x), A), x) - numpy.dot(numpy.matrix.transpose(x), b)
         return y
     return quadratic_bowl
 
 def make_quadratic_bowl_derivative(A, b):
     def quadratic_bowl_derivative(x):
-        return A*x - b
+        return numpy.dot(A, x) - b
     return quadratic_bowl_derivative
 
 if __name__ == '__main__':
@@ -57,5 +58,5 @@ if __name__ == '__main__':
 
 
     min_x, min_y = gradient_descent(quadratic_bowl, quadratic_bowl_derivative, numpy.array([0, 0]), 0.1, 0.01)
-    print min_x, min_y
+    print "min_x: ", min_x, "   min_y",  min_y
 
