@@ -29,17 +29,15 @@ def plot_gradient_descent(objective_f, previous_values):
     #     #     break
     #     ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
 
-
-
     objective_x = numpy.arange(-50, 50, 0.1)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
     objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
     plt.plot(objective_x, objective_y, 'b-')
 
-
     plt.show()
 
-##### Gradient descent testing functions #######
+
+####### Gradient descent testing functions ########
 
 def make_negative_gaussian(mean, covariance):
     def negative_gaussian(x):
@@ -64,6 +62,9 @@ def make_quadratic_bowl_derivative(A, b):
         return numpy.dot(A, x) - b
     return quadratic_bowl_derivative
 
+
+######## Numerical approx for gradient ########
+
 def calculate_gradient_numerically(f, x, y, delta):
     original = numpy.array([x,y])
     x_new = numpy.array([(x+delta), y])
@@ -71,6 +72,25 @@ def calculate_gradient_numerically(f, x, y, delta):
     x_slope = (f(x_new) - f(original))/delta
     y_slope = (f(y_new) - f(original))/delta
     return (x_slope, y_slope)
+
+
+####### Least squares error ########
+
+def make_least_square_derivative(x, y):
+    def least_square_derivative(theta):
+        scaling_factor = 0
+        for i in range(len(y)):
+            scaling_factor += numpy.dot(numpy.matrix.transpose(x[i]), theta) - y[i]
+        scaling_factor *= 2
+        return numpy.dot(scaling_factor, numpy.matrix.transpose(x[i]))
+    return least_square_derivative
+
+####### SGD update ##########
+def calc_next_theta(old_theta, x, y):
+    n = 2
+    return old_theta - numpy.dot(2 * n, numpy.dot(numpy.matrix.transpose(x[i]), old_theta) - y[i])
+
+def sgd(x, y, next_theta_f, threshold):
 
 
 if __name__ == '__main__':
@@ -91,4 +111,6 @@ if __name__ == '__main__':
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
+
+    plot_gradient_descent(objective_f, previous_values)
 
