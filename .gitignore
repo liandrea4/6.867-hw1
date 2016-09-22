@@ -1,0 +1,7 @@
+# PyInstaller
+*.pyc
+
+# LaTeX files
+*.log
+*.aux
+*.synctex.gz
