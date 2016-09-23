@@ -7,16 +7,11 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     difference = threshold + 1
 
     while abs(difference) > threshold:
-        if len(previous_values) > 2:
-            return previous_values
         old_x = previous_values[-1][0]
         old_y = previous_values[-1][1]
-        print "step: ", len(previous_values), "  gradient: ", gradient_f(old_x)
         new_x = old_x - (step_size * gradient_f(old_x))
-        print "old_x: ", old_x, "   new_x: ", new_x, "   y: ", old_y
         new_y = objective_f(new_x)
         difference = old_y - new_y
-        print "difference: ", old_y - new_y
         previous_values.append((new_x, new_y))
 
     return previous_values
@@ -81,8 +76,8 @@ def calculate_gradient_numerically(f, x, y, delta):
 if __name__ == '__main__':
     parameters = getData()
     initial_guess = numpy.array([40, 40])
-    step_size = 100000
-    threshold = 0.0000000005
+    step_size = 1000
+    threshold = 0.00000001
 
     gaussian_mean = parameters[0]
     gaussian_cov = parameters[1]
@@ -91,6 +86,13 @@ if __name__ == '__main__':
 
     # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
     # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
+
+    # objective_x = numpy.arange(-50, 50, 0.1)
+    # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
+    # objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
+
+    # print "gradient: ", gradient_f
+    # print "numpy gradient: ", numpy.gradient(objective_y)
 
     previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
