@@ -65,12 +65,14 @@ if __name__ == '__main__':
     objective_f = make_least_square_error(x_matrix, y_vector)
     gradient_f = make_numeric_gradient_calculator(objective_f, 0.01)
 
-    previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    
-    print "min_x: ", min_x, "  min_y",  min_y
-    print "number of steps: ", len(previous_values)
+    print gradient_f(theta)
 
-    plot_data(previous_values)
+    # previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    
+    # print "min_x: ", min_x, "  min_y",  min_y
+    # print "number of steps: ", len(previous_values)
+
+    # plot_data(previous_values)
 
 
