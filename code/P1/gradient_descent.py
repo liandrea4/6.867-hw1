@@ -65,33 +65,53 @@ def make_quadratic_bowl_derivative(A, b):
 
 ######## Numerical approx for gradient ########
 
-def calculate_gradient_numerically(f, x, y, delta):
-    original = numpy.array([x,y])
-    x_new = numpy.array([(x+delta), y])
-    y_new = numpy.array([x, (y+delta)])
-    x_slope = (f(x_new) - f(original))/delta
-    y_slope = (f(y_new) - f(original))/delta
-    return (x_slope, y_slope)
+# def calculate_gradient_numerically(f, x, y, delta):
+#     original = numpy.array([x,y])
+#     x_new = numpy.array([(x+delta), y])
+#     y_new = numpy.array([x, (y+delta)])
+#     x_slope = (f(x_new) - f(original))/delta
+#     y_slope = (f(y_new) - f(original))/delta
+#     return (x_slope, y_slope)
+
+def make_numeric_gradient_calculator(f, delta):
+    def numeric_gradient_calculator(x):
+        original_x = x
+        delta1 = float(delta)
+        
+        length = len(x)
+        slopes = [0] * length
+        for i in range(length):
+            new_x = numpy.copy(x)
+            new_value = new_x[i]+delta1
+            
+            numpy.put(new_x, [i], [new_value])
+            
+            current_slope = (f(new_x) - f(original_x))/delta1
+            slopes[i] = current_slope
+
+        return numpy.array(slopes)
+    return numeric_gradient_calculator
 
 
 if __name__ == '__main__':
     parameters = getData()
-    initial_guess = numpy.array([40, 40])
+    initial_guess = numpy.array([5.0, 5.0])
     step_size = 100000
     threshold = 0.0000000005
 
-    gaussian_mean = parameters[0]
-    gaussian_cov = parameters[1]
-    objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
-    gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
+    # gaussian_mean = parameters[0]
+    # gaussian_cov = parameters[1]
+    # objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
+    # gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
 
-    # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
-    # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
+    objective_f = make_quadratic_bowl(parameters[2], parameters[3])
+    gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
+    print calculate_gradient_numerically(objective_f, initial_guess, 0.1)
 
-    previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    print "min_x: ", min_x, "  min_y",  min_y
-    print "number of steps: ", len(previous_values)
+    # previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    # print "min_x: ", min_x, "  min_y",  min_y
+    # print "number of steps: ", len(previous_values)
 
-    plot_gradient_descent(objective_f, previous_values)
+    # plot_gradient_descent(objective_f, previous_values)
 

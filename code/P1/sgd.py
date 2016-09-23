@@ -1,5 +1,6 @@
 from loadFittingDataP1      import getData
 from gradient_descent       import gradient_descent
+from gradient_descent       import make_numeric_gradient_calculator
 import matplotlib.pyplot    as plt
 import numpy
 
@@ -38,17 +39,18 @@ def sgd(x, y, next_theta_f, threshold):
 
 if __name__ == '__main__':
     step_size = 0.001
-    threshold = 0.001
+    threshold = 0.5
 
     fitting_data = getData()
     x_matrix = fitting_data[0]
     y_vector = fitting_data[1]
-    theta = numpy.array([0] * 10)
+    theta = numpy.array([0.0] * 10)
 
     objective_f = make_least_square_error(x_matrix, y_vector)
-    gradient_f = make_least_square_derivative(x_matrix, y_vector)
+    gradient_f = make_numeric_gradient_calculator(objective_f, 0.01)
 
     previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
