@@ -7,12 +7,16 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     difference = threshold + 1
 
     while abs(difference) > threshold:
+        if len(previous_values) > 2:
+            return previous_values
         old_x = previous_values[-1][0]
         old_y = previous_values[-1][1]
-        print "gradient: ", gradient_f(old_x)
+        print "step: ", len(previous_values), "  gradient: ", gradient_f(old_x)
         new_x = old_x - (step_size * gradient_f(old_x))
+        print "old_x: ", old_x, "   new_x: ", new_x, "   y: ", old_y
         new_y = objective_f(new_x)
         difference = old_y - new_y
+        print "difference: ", old_y - new_y
         previous_values.append((new_x, new_y))
 
     return previous_values
