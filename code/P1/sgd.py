@@ -103,3 +103,4 @@ if __name__ == '__main__':
 
     plot_data(previous_values, x_channel)
 
+
