@@ -9,13 +9,13 @@ import numpy
 def make_least_square_error(x_matrix, y_vector):
     def least_square_error(theta):
         length = len(y_vector)
-        sum = 0
+        error_sum = 0
         for i in range(length):
             x_transposed = numpy.matrix.transpose(x_matrix[i])
             partial_sum = numpy.dot(x_transposed, theta) - y_vector[i]
             partial_sum_squared = partial_sum ** 2
-            sum += partial_sum_squared
-        return sum
+            error_sum += partial_sum_squared
+        return error_sum
     return least_square_error
 
 def make_least_square_derivative(x, y):
@@ -31,20 +31,45 @@ def make_least_square_derivative(x, y):
     return least_square_derivative
 
 ####### SGD update ##########
-def calc_next_theta(old_theta, x, y, index):
+def make_single_point_least_square_error():
+    def single_point_least_square_error(x, y, theta):
+        x_transposed = numpy.matrix.transpose(x)
+        difference = numpy.dot(x_transposed, theta) - y
+        return difference ** 2
+    return single_point_least_square_error
+
+def calc_next_theta(old_theta, x, y, t):
     t0 = 1.
     k = 0.6
-    n = lambda t: (1.+t)**(-k)
-    return old_theta - numpy.dot(2 * n(index), numpy.dot(numpy.matrix.transpose(x[i]), old_theta) - y[i])
+    n = lambda t: (t0 + t)**(-k)
+    gradient = 2 * numpy.dot(numpy.dot(numpy.matrix.transpose(x), old_theta) - y, x)
+    print "n: ", n(t), "   gradient: ", gradient
+    return old_theta - (n(t) * gradient)
 
-def sgd(x, y, theta, threshold):
-    t = 0
-    for x_i, y_i in zip(x,y):
-        theta = calc_next_theta(theta, x_i, y_i, t)
+def sgd(x, y, theta, objective_f, threshold):
+    old_jtheta = objective_f(x[0], y[0], theta)
+    difference = threshold + 1
+    previous_values = []
+    t = 1
+
+    while abs(difference) > threshold:
+        i = numpy.random.randint(0, len(y))
+        print "old_x: ", theta
+        theta = calc_next_theta(theta, x[i], y[i], t)
+        print "new_x: ", theta
+        new_jtheta = objective_f(x[i], y[i], theta)
+        difference = new_jtheta - old_jtheta
+
+        previous_values.append((theta, new_jtheta))
+        print "old_jtheta: ", old_jtheta, "   new_jtheta: ", new_jtheta
+        print "difference: ", difference
+        old_jtheta = new_jtheta
+
         t += 1
 
+    return previous_values
 
-def plot_data(previous_values, x_channel): #, x_matrix, y_vector):
+def plot_data(previous_values, x_channel):
     x = [ value[0][x_channel] for value in previous_values ]
     y = [ value[1] for value in previous_values ]
     # data_x = [ value[x_channel] for value in x_matrix ]
@@ -55,7 +80,7 @@ def plot_data(previous_values, x_channel): #, x_matrix, y_vector):
 
 if __name__ == '__main__':
     step_size = 0.000001
-    threshold = 0.5
+    threshold = 1000
     x_channel = 2
 
     fitting_data = getData()
@@ -65,13 +90,16 @@ if __name__ == '__main__':
 
     objective_f = make_least_square_error(x_matrix, y_vector)
     gradient_f = make_numeric_gradient_calculator(objective_f, 0.01)
+    single_point_objective_f = make_single_point_least_square_error()
 
-    previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
+    # previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+
+    previous_values = sgd(x_matrix, y_vector, theta, single_point_objective_f, threshold)
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
 
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
 
-    plot_data(previous_values, x_channel) #, x_matrix, y_vector)
-
+    plot_data(previous_values, x_channel)
 
