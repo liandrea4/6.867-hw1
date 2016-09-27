@@ -6,10 +6,11 @@ from loadFittingDataP2      import getData
 import matplotlib.pyplot    as plt
 import numpy
 import math
+import sys
 
 ##### Maximum likelihood #####
 
-def calculate_phi(x_vector, y_vector, M):
+def calculate_polynomial_phi(x_vector, M):
     phi = []
     for x in x_vector:
         phi_x = []
@@ -18,14 +19,26 @@ def calculate_phi(x_vector, y_vector, M):
         phi.append(phi_x)
     return phi
 
-def calculate_mle_weight(x_vector, y_vector, M):
-    phi = calculate_phi(x_vector, y_vector, M)
+def calculate_cosine_phi(x_vector, M):
+    if type(M) != int or M > 8:
+        raise Exception("Only check first 8 cosines")
+
+    phi = []
+    for x in x_vector:
+        phi_x = []
+        for i in range(1, M+1):
+            phi_x.append(math.cos(math.pi * x * i))
+        phi.append(phi_x)
+    return phi
+
+def calculate_mle_weight(x_vector, y_vector, calculate_phi_fn, M):
+    phi = calculate_phi_fn(x_vector, M)
     phi_transpose = numpy.transpose(phi)
     inversed = numpy.linalg.inv(numpy.dot(phi_transpose, phi))
     w_mle = numpy.dot(numpy.dot(inversed, phi_transpose), y_vector)
     return w_mle
 
-def get_regression_fn(w_mle):
+def get_polynomial_regression_fn(w_mle):
     def regression_fn(x):
         fn = 0
         for index in range(len(w_mle)):
@@ -33,7 +46,15 @@ def get_regression_fn(w_mle):
         return fn
     return regression_fn
 
-def plot_regression(x, y, real_fn, regression_fn):
+def get_cosine_regression_fn(w_mle):
+    def regression_fn(x):
+        fn = 0
+        for index in range(len(w_mle)):
+            fn += w_mle[index] * math.cos(x * (index + 1) * math.pi)
+        return fn
+    return regression_fn
+
+def plot_regression(x, y, real_fn, regression_fn, regression_type):
     plt.figure()
 
     ## Plot data points
@@ -51,7 +72,7 @@ def plot_regression(x, y, real_fn, regression_fn):
 
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title('Linear regression (M=' + str(M) + ')')
+    plt.title(regression_type + ' regression (M=' + str(M) + ')')
     plt.show()
 
 ##### Sum of square error #####
@@ -95,31 +116,38 @@ def get_generic_regression_fn(list_of_basis_functions, w_mle):
     return generic_regression_fn
 
 if __name__ == '__main__':
-    M = 3
+    if len(sys.argv) > 1:
+        M = int(sys.argv[1])
+    else:
+        M = 2
     x, y = getData(ifPlotData=False)
     real_fn = lambda x: math.cos(math.pi * x) + 1.5 * math.cos(2 * math.pi * x)
 
     ## Maximum likelihood calculations
 
-    w_mle = calculate_mle_weight(x, y, M)
-    print "w_mle: ", w_mle
-    regression_fn = get_regression_fn(w_mle)
+    # w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M)
+    # regression_fn = get_polynomial_regression_fn(w_mle)
+    # plot_regression(x, y, real_fn, regression_fn, "Linear")
 
-    # plot_regression(x, y, real_fn, regression_fn)
+
+    w_mle = calculate_mle_weight(x, y, calculate_cosine_phi, M)
+    regression_fn = get_cosine_regression_fn(w_mle)
+    plot_regression(x, y, real_fn, regression_fn, "Cosine")
+
+    print "w_mle: ", w_mle
 
 
     ## Gradient descent
-    list_of_basis_functions = [ lambda x: x ** i for i in range(M+1) ]
-    weight_vector = numpy.array([1] * (M+1))
-    step_size = 0.0005
-    threshold = 1
+    # weight_vector = numpy.array([1] * (M+1))
+    # step_size = 0.0005
+    # threshold = 1
 
-    objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
-    gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
+    # objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
+    # gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
 
-    previous_values = gradient_descent(objective_f, gradient_f, weight_vector, step_size, threshold)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    print "min_x: ", min_x, "  min_y",  min_y
-    print "number of steps: ", len(previous_values)
+    # previous_values = gradient_descent(objective_f, gradient_f, weight_vector, step_size, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    # print "min_x: ", min_x, "  min_y",  min_y
+    # print "number of steps: ", len(previous_values)
 
-    plot_data(previous_values, 0)
+    # plot_data(previous_values, 0)
