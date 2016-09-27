@@ -61,7 +61,7 @@ def sgd(x, y, theta, objective_f, threshold):
     t = 1
 
     while not all(differences):
-        i = t%10 -1 
+        i = t%10 -1
         print "old_x: ", theta
         theta = calc_next_theta(theta, x[i], y[i], t)
         print "new_x: ", theta
@@ -100,19 +100,18 @@ if __name__ == '__main__':
     theta = numpy.array([0.0] * 10)
 
     objective_f = make_least_square_error(x_matrix, y_vector)
-    
     single_point_objective_f = make_single_point_least_square_error()
-
-    gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)
+    # gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)
+    gradient_f = make_least_square_derivative(x_matrix, y_vector)
 
     # calc_next_theta(theta, x_matrix[0], y_vector[0], 2.0)
     # print gradient_f(theta)
 
-    # previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
-    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-
-    previous_values = sgd(x_matrix, y_vector, theta, single_point_objective_f, threshold)
+    previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+
+    # previous_values = sgd(x_matrix, y_vector, theta, single_point_objective_f, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
 
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)

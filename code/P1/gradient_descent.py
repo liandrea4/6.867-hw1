@@ -9,11 +9,13 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
     while abs(difference) > threshold:
         old_x = previous_values[-1][0]
         old_y = previous_values[-1][1]
+        print "step_size: ", step_size, "   gradient_f: ", gradient_f(old_x)
         new_x = old_x - (step_size * gradient_f(old_x))
-        print "nex w", new_x
+        print "old_x: ", old_x, "   new_x: ", new_x
         new_y = objective_f(new_x)
         difference = old_y - new_y
         print "difference", difference
+        print "new_y: ", new_y
         previous_values.append((new_x, new_y))
 
     return previous_values
@@ -93,7 +95,6 @@ def make_numeric_gradient_calculator(f, delta):
         return numpy.array(slopes)
     return numeric_gradient_calculator
 
-
 if __name__ == '__main__':
     parameters = getData()
     initial_guess = numpy.array([0.0, 0.0])
@@ -123,7 +124,6 @@ if __name__ == '__main__':
     min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
-
 
     plot_gradient_descent(objective_f, previous_values)
 
