@@ -10,8 +10,10 @@ def gradient_descent(objective_f, gradient_f, x0, step_size, threshold):
         old_x = previous_values[-1][0]
         old_y = previous_values[-1][1]
         new_x = old_x - (step_size * gradient_f(old_x))
+        print "nex w", new_x
         new_y = objective_f(new_x)
         difference = old_y - new_y
+        print "difference", difference
         previous_values.append((new_x, new_y))
 
     return previous_values
@@ -94,18 +96,21 @@ def make_numeric_gradient_calculator(f, delta):
 
 if __name__ == '__main__':
     parameters = getData()
-    initial_guess = numpy.array([40, 40])
-    step_size = 1000
+    initial_guess = numpy.array([0.0, 0.0])
+
+    # Parameters for negative gaussian
+    step_size = 1000000
     threshold = 0.00000001
 
-    # gaussian_mean = parameters[0]
-    # gaussian_cov = parameters[1]
-    # objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
-    # gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
+    gaussian_mean = parameters[0]
+    gaussian_cov = parameters[1]
+    objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
+    gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
+    print gradient_f(initial_guess)
 
-    objective_f = make_quadratic_bowl(parameters[2], parameters[3])
-    gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
-    print calculate_gradient_numerically(objective_f, initial_guess, 0.1)
+    # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
+    # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
+    # print calculate_gradient_numerically(objective_f, initial_guess, 0.1)
 
     # objective_x = numpy.arange(-50, 50, 0.1)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
@@ -120,5 +125,5 @@ if __name__ == '__main__':
     print "number of steps: ", len(previous_values)
 
 
-    # plot_gradient_descent(objective_f, previous_values)
+    plot_gradient_descent(objective_f, previous_values)
 
