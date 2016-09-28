@@ -108,10 +108,13 @@ def make_sse_gradient_fn(x, y, list_of_basis_functions, M):
     return sse_gradient_fn
 
 def get_generic_regression_fn(list_of_basis_functions, w_mle):
-    if len(list_of_basis_functions) != len(w_mle):
-        print "list: ", list_of_basis_functions, "   weight_vector: ", w_mle
-        print "len(list): ", len(list_of_basis_functions), "   len(weight_vector): ", len(w_mle)
-        raise Exception("Wrong dimensions of basis functions and weight vector")
+    len_difference = len(list_of_basis_functions) - len(w_mle)
+    if len_difference > 0:
+        numpy.append(w_mle, [0] * len_difference)
+
+        # print "list: ", list_of_basis_functions, "   weight_vector: ", w_mle
+        # print "len(list): ", len(list_of_basis_functions), "   len(weight_vector): ", len(w_mle)
+        # raise Exception("Wrong dimensions of basis functions and weight vector")
 
     def generic_regression_fn(x):
         fn = 0
