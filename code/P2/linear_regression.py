@@ -129,7 +129,6 @@ if __name__ == '__main__':
     # regression_fn = get_polynomial_regression_fn(w_mle)
     # plot_regression(x, y, real_fn, regression_fn, "Linear")
 
-
     w_mle = calculate_mle_weight(x, y, calculate_cosine_phi, M)
     regression_fn = get_cosine_regression_fn(w_mle)
     plot_regression(x, y, real_fn, regression_fn, "Cosine")
