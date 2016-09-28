@@ -5,3 +5,9 @@
 *.log
 *.aux
 *.synctex.gz
+*.out
+*.blg
+*.bbl
+
+# Mac files
+.DS_Store
