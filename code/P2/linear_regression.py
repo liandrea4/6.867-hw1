@@ -54,7 +54,7 @@ def get_cosine_regression_fn(w_mle):
         return fn
     return regression_fn
 
-def plot_regression(x, y, real_fn, regression_fn, regression_type):
+def plot_regression(x, y, fns_to_plot, title):
     plt.figure()
 
     ## Plot data points
@@ -62,17 +62,22 @@ def plot_regression(x, y, real_fn, regression_fn, regression_type):
 
     x_fn_values = numpy.linspace(min(x), max(x), 1000)
 
-    ## Plot real function
-    real_fn_y_values = [ real_fn(x_i) for x_i in x_fn_values ]
-    plt.plot(x_fn_values, real_fn_y_values, 'g-', linewidth=2)
+    for fn in fns_to_plot.keys():
+        fn_y_values = [ fns_to_plot[fn](x_i) for x_i in x_fn_values ]
+        plt.plot(x_fn_values, fn_y_values, linewidth=2, label=fn)
 
-    ## Plot regression function
-    regression_fn_y_values = [ regression_fn(x_i) for x_i in x_fn_values ]
-    plt.plot(x_fn_values, regression_fn_y_values, 'r-', linewidth=2)
+    # ## Plot real function
+    # real_fn_y_values = [ real_fn(x_i) for x_i in x_fn_values ]
+    # plt.plot(x_fn_values, real_fn_y_values, 'g-', linewidth=2)
+
+    # ## Plot regression function
+    # regression_fn_y_values = [ regression_fn(x_i) for x_i in x_fn_values ]
+    # plt.plot(x_fn_values, regression_fn_y_values, 'r-', linewidth=2)
 
     plt.xlabel('x')
     plt.ylabel('y')
-    plt.title(regression_type + ' regression (M=' + str(M) + ')')
+    plt.legend(fontsize=12)
+    plt.title(title)
     plt.show()
 
 ##### Sum of square error #####
@@ -127,11 +132,19 @@ if __name__ == '__main__':
 
     # w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M)
     # regression_fn = get_polynomial_regression_fn(w_mle)
-    # plot_regression(x, y, real_fn, regression_fn, "Linear")
+    # fns_to_plot = {
+    #     "Actual": real_fn,
+    #     "Linear regression": regression_fn
+    # }
+    # plot_regression(x, y, fns_to_plot, "Linear regression (M=" + str(M) + ")")
 
     w_mle = calculate_mle_weight(x, y, calculate_cosine_phi, M)
     regression_fn = get_cosine_regression_fn(w_mle)
-    plot_regression(x, y, real_fn, regression_fn, "Cosine")
+    fns_to_plot = {
+        "Actual": real_fn,
+        "Cosine regression": regression_fn
+    }
+    plot_regression(x, y, fns_to_plot, "Cosine regression (M=" + str(M) + ")")
 
     print "w_mle: ", w_mle
 
