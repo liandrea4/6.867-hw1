@@ -10,7 +10,9 @@
 % For figures
 \usepackage{graphicx} % more modern
 %\usepackage{epsfig} % less modern
-\usepackage{subfigure}
+% \usepackage{subfigure}
+\usepackage{subcaption}
+\usepackage{multicol}
 
 % For citations
 \usepackage{natbib}
@@ -93,11 +95,50 @@ $$\Phi =
   \phi_0(x_n)   & \phi_1(x_n)   & \phi_2(x_n)   & \dots   & \phi_M(x_n) \\
 \end{bmatrix}
 $$
-Our choice of $M$, the degree of our polynomial basis, largely determines the fit of the regression to the data (Figure 2). \\
+Our choice of $M$, the degree of our polynomial basis, largely determines the fit of the regression to the data (Figure 2). More specifically, as small values of $M$, the polynomial basis cannot adequately capture all the data points. At higher values of $M$ however, overfitting occurs in which the weight vector performs well on the training data, but is not well generalized to new data. The value of $M$ therefore must be carefully considered in order to prevent too high variability in our generated regression polynomial. \\
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P2/linear_regression,0.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/linear_regression,3.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/linear_regression,1.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/linear_regression,10.png}
+\end{multicols}
+\caption{Linear regression for varying values of M.}
+\end{figure}
+
+We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. This is again calculated for multiple values of $M$ and compared in Figure 3. Interestingly, even when we use the same family of basis functions as used to generate the initial data ($M=2$), due to the noise $\epsilon(x)$ added to the initial dataset, the maximum likelihood weight vector does not identically match the actual function used:
+$$ w =
+\begin{bmatrix}
+  1 \\
+  1.5
+\end{bmatrix}$$
+$$ w_{MLE} =
+\begin{bmatrix}
+  0.779 \\
+  1.174
+\end{bmatrix}$$
+
+where $w$ is the actual weight vector and $w_{MLE}$ is the maximum likelihood estimated weight vector.
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P2/cosine_regression,1.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/cosine_regression,3.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/cosine_regression,2.png}
+  \includegraphics[width=1.2\linewidth]{code/P2/cosine_regression,8.png}
+\end{multicols}
+\caption{Linear regression for varying values of M.}
+\end{figure}
+
+\section{Ridge regression}
 
 We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
 
-\section{Ridge regression}
+We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+
+We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+
 
 \end{document}
 
