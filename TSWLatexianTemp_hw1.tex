@@ -204,9 +204,9 @@ $$y = w^{T}_{true}\phi(x)+\epsilon$$ (The $\epsilon$ simply represents small noi
 
 $$\phi(x) = (x,sin(0.4\pi x \times 1), sin(0.4\pi x \times 2), . . . , sin(0.4\pi x \times 12))$$\\
 
-The true parameter $w^{T}_{true}$ was given to us as [0.000000000000000000e+00 0.000000000000000000e+00 5.646300000000000100e+00 7.785999999999999600e-01 0.000000000000000000e+00 8.108999999999999500e-01 2.682700000000000100e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00]. As you can see there are only 4 non-zero components to this vector meaning that it is quite sparse. (Sparseness just means that there are only a few components of the vector that are non-zero and in general sparse weights mean that the algorithm is able to calculate the value of the function faster.  \\
+The true parameter $w^{T}_{true}$ was given to us as [0.000000000000000000e+00 0.000000000000000000e+00 5.646300000000000100e+00 7.785999999999999600e-01 0.000000000000000000e+00 8.108999999999999500e-01 2.682700000000000100e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00]. As you can see there are only 4 non-zero components to this vector meaning that it is quite sparse.\\
 
-The overarching idea was that we would be able to attain the sparseness using LASSO because the regularization penalty used in LASSO is the $L_{1}$ norm. In terms of actual implementation, we decided to use the Lasso function from sklearn. Ultimately, we were indeed able to get a sparse estimation from LASSO. With the following weights: [ need to fill in ] we were able to get a pretty good estimation of the actual curve that was created from the true weights. You can see how similar the graphs are in the pictures on the right.
+The overarching idea was that we would be able to attain the sparseness using LASSO because the regularization penalty used in LASSO is the $L_{1}$ norm. In terms of actual implementation, we decided to use the Lasso function from sklearn. Ultimately, we were indeed able to get a sparse estimation from LASSO. With the following weights: [ need to fill in ] we were able to get a pretty good estimation of the actual curve that was created from the true weights. 
 
 
 \end{document}
