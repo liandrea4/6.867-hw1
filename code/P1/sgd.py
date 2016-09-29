@@ -47,34 +47,36 @@ def make_single_point_least_square_error_2(x, y):
     return single_point_least_square_error_2
 
 def calc_next_theta(old_theta, x, y, t):
-    t0 = 10000000
-    k = 0.6
+    t0 = 10**8
+    k = 0.75
     n = lambda t: (t0 + t)**(-k)
     gradient = 2 * numpy.dot(numpy.dot(numpy.matrix.transpose(x), old_theta) - y, x)
     print "n: ", n(t), "   gradient: ", gradient
     return old_theta - (n(t) * gradient)
 
 def sgd(x, y, theta, objective_f, threshold):
-    old_jtheta = objective_f(x[0], y[0], theta)
-    differences = [False]*10
+    number_of_samples = len(x)
+    
+    differences = [False]*number_of_samples
+    old_jthetas = [0.0] * number_of_samples
     previous_values = []
-    t = 1
+    t = 0
 
     while not all(differences):
-        i = t%10 -1
+        i = t%number_of_samples
         print "old_x: ", theta
         theta = calc_next_theta(theta, x[i], y[i], t)
         print "new_x: ", theta
         new_jtheta = objective_f(x[i], y[i], theta)
-        difference = new_jtheta - old_jtheta
+        difference = new_jtheta - old_jthetas[i]
 
         if(abs(difference)<threshold):
             differences[i] = True
 
         previous_values.append((theta, new_jtheta))
-        print "old_jtheta: ", old_jtheta, "   new_jtheta: ", new_jtheta
+        print "old_jtheta[i]: ", old_jthetas[i], "   new_jtheta: ", new_jtheta
         print "difference: ", difference
-        old_jtheta = new_jtheta
+        old_jthetas[i] = new_jtheta
 
         t += 1
 
@@ -90,9 +92,9 @@ def plot_data(previous_values, x_channel):
     plt.show()
 
 if __name__ == '__main__':
-    step_size = 0.000001
+    step_size = 10**(-8)
     threshold = 1
-    x_channel = 2
+    x_channel = 1
 
     fitting_data = getData()
     x_matrix = fitting_data[0]
@@ -101,7 +103,7 @@ if __name__ == '__main__':
 
     objective_f = make_least_square_error(x_matrix, y_vector)
     single_point_objective_f = make_single_point_least_square_error()
-    # gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)
+    gradient_f = make_numeric_gradient_calculator(objective_f, 0.001)
     gradient_f = make_least_square_derivative(x_matrix, y_vector)
 
     # calc_next_theta(theta, x_matrix[0], y_vector[0], 2.0)
@@ -119,6 +121,5 @@ if __name__ == '__main__':
     plot_data(previous_values, x_channel)
 
 
-    #min_x:  [ -2.3348135   -3.00724545  -4.05156805   8.95326775  -3.72941038
-  # 4.20504711   2.08416372   0.3758886  -12.46516232  14.70857811]   min_y 0.070959107239
+   
 
