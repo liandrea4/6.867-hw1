@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../P1')
-from gradient_descent       import gradient_descent,  make_numeric_gradient_calculator 
+from gradient_descent       import gradient_descent,  make_numeric_gradient_calculator
 from sgd                    import plot_data
 from loadFittingDataP2      import getData
 import matplotlib.pyplot    as plt
@@ -74,10 +74,10 @@ def plot_regression(x, y, fns_to_plot, title):
     # regression_fn_y_values = [ regression_fn(x_i) for x_i in x_fn_values ]
     # plt.plot(x_fn_values, regression_fn_y_values, 'r-', linewidth=2)
 
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.legend(fontsize=12)
-    plt.title(title)
+    # plt.xlabel('x')
+    # plt.ylabel('y')
+    plt.legend(fontsize=18)
+    plt.title(title, fontsize=20)
     plt.show()
 
 ##### Sum of square error #####
@@ -108,10 +108,13 @@ def make_sse_gradient_fn(x, y, list_of_basis_functions, M):
     return sse_gradient_fn
 
 def get_generic_regression_fn(list_of_basis_functions, w_mle):
-    if len(list_of_basis_functions) < len(w_mle):
-        print "list: ", list_of_basis_functions, "   weight_vector: ", w_mle
-        print "len(list): ", len(list_of_basis_functions), "   len(weight_vector): ", len(w_mle)
-        raise Exception("Wrong dimensions of basis functions and weight vector")
+    len_difference = len(list_of_basis_functions) - len(w_mle)
+    if len_difference > 0:
+        numpy.append(w_mle, [0] * len_difference)
+
+        # print "list: ", list_of_basis_functions, "   weight_vector: ", w_mle
+        # print "len(list): ", len(list_of_basis_functions), "   len(weight_vector): ", len(w_mle)
+        # raise Exception("Wrong dimensions of basis functions and weight vector")
 
     def generic_regression_fn(x):
         fn = 0
@@ -202,36 +205,35 @@ if __name__ == '__main__':
     }
     plot_regression(x, y, fns_to_plot, "Cosine regression (M=" + str(M) + ")")
 
-
     print "w_mle: ", w_mle
 
 
     ## Gradient descent
-    weight_vector = numpy.array([2.0] * (M+1))
-    step_size = 0.05
-    threshold = 0.0001
-    
-    single_point_objective_f = make_single_point_least_square_error(list_of_basis_functions)
+    # weight_vector = numpy.array([2.0] * (M+1))
+    # step_size = 0.05
+    # threshold = 0.0001
 
-    # print "first value", single_point_objective_f(x[0], y[0], [ 1.67582053, 1.78700602, 1.84132746])
-    # print "second value", single_point_objective_f(x[0], y[0], [ 0.01558979, 0.54846317,  0.91947502])
+    # single_point_objective_f = make_single_point_least_square_error(list_of_basis_functions)
 
-   
-    objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
-    gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
-    numeric_gradient = make_numeric_gradient_calculator(objective_f, 0.001)
+    # # print "first value", single_point_objective_f(x[0], y[0], [ 1.67582053, 1.78700602, 1.84132746])
+    # # print "second value", single_point_objective_f(x[0], y[0], [ 0.01558979, 0.54846317,  0.91947502])
 
-    print "length", len(x)
 
-    previous_values = sgd(x, y, weight_vector, single_point_objective_f, threshold, numeric_gradient)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    # objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
+    # gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
+    # numeric_gradient = make_numeric_gradient_calculator(objective_f, 0.001)
 
-    # # print "gradient", gradient_f(w_mle)
-    # print "numeric gradient", numeric_gradient(weight_vector)
+    # print "length", len(x)
 
-    # # previous_values = gradient_descent(objective_f, numeric_gradient, weight_vector, step_size, threshold)
-    # # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    print "min_x: ", min_x, "  min_y",  min_y
-    print "number of steps: ", len(previous_values)
-    print "w_mle: ", w_mle
-    plot_data(previous_values, 0)
+    # previous_values = sgd(x, y, weight_vector, single_point_objective_f, threshold, numeric_gradient)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+
+    # # # print "gradient", gradient_f(w_mle)
+    # # print "numeric gradient", numeric_gradient(weight_vector)
+
+    # # # previous_values = gradient_descent(objective_f, numeric_gradient, weight_vector, step_size, threshold)
+    # # # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    # print "min_x: ", min_x, "  min_y",  min_y
+    # print "number of steps: ", len(previous_values)
+    # print "w_mle: ", w_mle
+    # plot_data(previous_values, 0)
