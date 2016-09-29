@@ -23,6 +23,7 @@
 
 % For math
 \usepackage{amsmath}
+\usepackage{siunitx}
 
 % As of 2011, we use the hyperref package to produce hyperlinks in the
 % resulting PDF.  If this breaks your system, please commend out the
@@ -51,60 +52,57 @@
 \begin{document}
 
 \twocolumn[
-\icmltitle{6.867: Homework 1}
+  \icmltitle{6.867: Homework 1}
 
-% % It is OKAY to include author information, even for blind
-% % submissions: the style file will automatically remove it for you
-% % unless you've provided the [accepted] option to the icml2013
-% % package.
-% \icmlauthor{Your Name}{email@yourdomain.edu}
-% \icmladdress{Your Fantastic Institute,
-%             314159 Pi St., Palo Alto, CA 94306 USA}
-% \icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
-% \icmladdress{Their Fantastic Institute,
-%             27182 Exp St., Toronto, ON M6H 2T1 CANADA}
+  % % It is OKAY to include author information, even for blind
+  % % submissions: the style file will automatically remove it for you
+  % % unless you've provided the [accepted] option to the icml2013
+  % % package.
+  % \icmlauthor{Your Name}{email@yourdomain.edu}
+  % \icmladdress{Your Fantastic Institute,
+  %             314159 Pi St., Palo Alto, CA 94306 USA}
+  % \icmlauthor{Your CoAuthor's Name}{email@coauthordomain.edu}
+  % \icmladdress{Their Fantastic Institute,
+  %             27182 Exp St., Toronto, ON M6H 2T1 CANADA}
 
-% You may provide any keywords that you
-% find helpful for describing your paper; these are used to populate
-% the "keywords" metadata in the PDF but will not be shown in the document
-\icmlkeywords{boring formatting information, machine learning, ICML}
+  % You may provide any keywords that you
+  % find helpful for describing your paper; these are used to populate
+  % the "keywords" metadata in the PDF but will not be shown in the document
+  \icmlkeywords{boring formatting information, machine learning, ICML}
 
-\vskip 0.3in
+  \vskip 0.3in
 ]
 
 \section{Gradient descent}
 
-We implemented a basic batch gradient descent procedure and applied it to minimize two different objective functions: the negative Gaussian function and the quadratic bowl function. Furthermore, after creating the implementations, we investigated how our choice of starting guess, step size, and convergence criterion/ threshold impacted our resulting solution. \\
+In this section, we explored the simplest and most-commonly discussed method of optimization for differentiable cost functions: gradient descent. We implemented a basic batch gradient descent procedure and applied it to minimize two different objective functions: the negative Gaussian function and the quadratic bowl function. Furthermore, after creating the implementations, we investigated how our choice of starting guess, step size, and convergence criterion/threshold impacted our resulting solution.
 
-Starting guess: \\
+\subsection{Starting guess}
+In general, we saw that starting guess did not have much of an impact on our resulting solution. If the starting guess was farther away from the actual minimum, it simply took the algorithm more iterations to converge. In the end however, the algorithm would converge for both of our objective functions. It is worth noting however that for alternative objective functions with behavior including plateaus or local minima, starting guess would likely play a larger role. Figure 1 illustrates gradient descent on our two objective functions with starting guesses of various orders of magnitude.
 
-In general we saw that starting guess did not have much of an impact on our resulting solution. If the starting guess was farther away from the actual minimum, it simply took the algorithm a bit longer to actually converge. In the end though, the algorithm would converge for both of our objective functions. To the right you can see graphs with starting guesses of various orders of magnitude. \\
+\subsection{Step size}
+Throughout our research, we discovered that step size had a fairly significant impact on the resulting solutions. For example, a step size that was too large could result in the gradient descent algorithm diverging instead of converging. This is illustrated in Figure 2 on the right. As we can see, the algorithm oversteps the minimum on the first step which causes the norm of the new gradient to be larger than the original gradient norm. This then proceeded to compound at every step, ultimately causing the algorithm to diverge to infinity.
 
-Step size: \\
+\subsection{Convergence criterion/threshold}
+In addition to step size, the convergence criterion had a fairly significant impact on the resulting solution. In general, we found that accuracy was inversely proportional to the convergence criterion while speed was directly proportional to the convergence criterion, which makes intuitive sense. With a large convergence criterion, the accuracy of the resulting solution was reduced while the algorithm ran to completion faster. On the other hand, with a smaller convergence criterion, the accuracy of the resulting solution was increased while the algorithm took many more iterations to complete. \\ \\
 
-Throughout our research, we discovered that step size actually had a pretty significant impact on our resulting solutions. For example, a step size that was too large would actually result in our gradient descent algorithm diverging instead of converging. This is illustrated in the figure on the right. As we can see, the algorithm oversteps on the first step which causes the norm of the new gradient to be larger than the original gradient norm. This then proceeds to compound at every step which ultimately causes the algorithm to diverge and go to infinity. \\
+In order to verify that our gradient functions were correct, we created a numerical gradient function so that we could validate the gradients at various points. To calculate the numerical gradients, we utilized the central difference approximation. For the quadratic bowl, it appears that no matter what the difference step was, the numerical gradient was always identical to the true gradient. For the negative gaussian, we discovered that by making the difference step smaller, our numerical gradient gained accuracy and became closer to the true gradient. For example, at the point (0,0), the real gradient for the negative Gaussian was $$[ \num{-1.44009348e-06}, \num{-1.44009348e-06}].$$
+The numerical gradient with a difference step of 100 was $$[ \num{-1.14032986e-08} , \num{-1.14032986e-08}].$$
+With a difference step of 10, the numerical gradient was $$[ \num{-1.37214353e-06},  \num{-1.37214353e-06}].$$
+With a difference step of 1, the numerical gradient was $$[ \num{-1.43939760e-06},  \num{-1.43939760e-06}].$$
+Lastly, with a difference step of 0.1, the numerical gradient was
+$$[ \num{-1.44008652e-06}, \num{-1.44008652e-06}],$$ which was almost identical to the true gradient. From a mathematical perspective this makes intuitive sense because the definition of a derivative is basically the numerical gradient as the difference step approaches 0. \\ \\
 
-Convergence criterion/ threshold: \\
+In the next part of our research, we utilized two forms of gradient descent (batch and stochastic gradient descent) in order to minimize the following function: \\
+$$J(\theta) = \Sigma_{i}(x^{(i)T}\theta - y^{i})^2$$
 
-In addition to step size, the convergence criterion also has a pretty significant impact on the resulting solution. In general, we find that accuracy is inversely proportional to the convergence criterion while speed is directly proportional to the convergence criterion, which makes intuitive sense. Basically, with a large convergence criterion, the accuracy of the resulting solution is reduced while the algorithm runs to completion faster. On the other hand, with a smaller convergence criterion, the accuracy of the resulting solution is increased while the algorithm takes much longer to complete. \\
+As before, we had to be very particular in the convergence criterion and step sizes in order to ensure that the gradient descent converged. For batch gradient descent, we chose an initial guess of all $0$'s with a step size of $10^{-6}$ and a convergence criterion of 1. This resulted in a $\theta$ that converged to [0.50832359, -2.33986133, -6.31150421, 6.80803415, -1.06442692, 6.66532056, 3.39605963, -0.45908695, -12.94348103, 15.73213395], which ultimately gave a minimum $J(\theta)$ of $8343.21291982$. \\ \\
 
-In order to make sure that our gradient functions were correct, we created a numerical gradient function so that we could validate the gradients at various points. To calculate the numerical gradients, we utilized the central difference approximation. For the quadratic bowl, it appears that no matter what the difference step was, the numerical gradient always equaled the true gradient. For the negative gaussian, we discovered that by making the difference step smaller, our numerical gradient gained accuracy and became closer to the true gradient. For example, at the point (0,0), the real gradient is [ -1.44009348e-06,   -1.44009348e-06]. The numerical gradient with a difference step of 100 is [ -1.14032986e-08 , -1.14032986e-08]. With a difference step of 10, the numerical gradient is [ -1.37214353e-06,  -1.37214353e-06]. With a difference step of 1, the numerical gradient is [ -1.43939760e-06,  -1.43939760e-06]. And lastly, with a difference step of 0.1, the numerical gradient is [ -1.44008652e-06,  -1.44008652e-06] (almost identical to the real gradient). From a mathematical perspective this makes intuitive sense because the very definition of a derivative is basically the numerical gradient as the difference step approaches 0. \\
-
-In the next part of our research, we utilize two forms of gradient descent in order to try and minimize the following function: \\
-$$J(\theta) = \Sigma_{i}(x^{(i)T}\theta - y^{i})^2$$ \\ 
-
-Like before, we had to be really particular in the convergence criterion and step sizes we chose in order to ensure that the gradient descent converges. For batch gradient descent we chose an initial guess of all $0s$ with a step size of $10^{-6}$ and a convergence criterion of 1. This resulted in a $\theta$ that converged to  [  0.50832359  -2.33986133  -6.31150421   6.80803415  -1.06442692 6.66532056   3.39605963  -0.45908695 -12.94348103  15.73213395], which ultimately gave a minimum $J(\theta)$ of 8343.21291982. \\
-
-In our stochastic gradient descent, we used the Robbins-Monro conditions in order to guarantee convergence. Specifically, we chose a $t$ value of $0.75$ and a $\gamma_{0}$ value of $10^{8}$. In terms of accuracy, it seems that the batch gradient descent is a bit more accurate. In terms of total number of evaluations, it also seems that the batch gradient has less.     
- 
-\label{submission}
-
-As in the past few years, ICML will rely exclusively on
-electronic formats for submission and review.
-
-
-\subsection{Templates for Papers}
-
+In stochastic gradient descent, instead of evaluating all training data in every parameter update, each update is based on a single training sample. When specifying the learning rate for each step, we used the Robbins-Monro conditions in order to guarantee convergence. Specifically, in our update rule
+$$\theta_{t+1} = \theta_{t} - \eta_{t}\nabla_{\theta}J(\theta_t; x^{(i)}, y^{(i)}),$$
+we define
+$$\eta_t = (\tau_0 + t)^{-\kappa}$$
+where $\kappa = 0.75$ and $\tau_{0} = 10^{8}$. In terms of accuracy, the batch gradient descent was generally more accurate than the stochastic gradient descent. However, in terms of the number of evaluations, the stochastic requires fewer iterations per parameter update. This is because in each iteration of batch gradient descent, $n$ evaluations are necessary, compared with stochastic gradient descent which evaluates the a single point-wise gradient per update iteration. Overall however, we found that batch gradient descent required fewer overall evaluations than stochastic gradient descent.
 
 \section{Linear basis function regression}
 
@@ -142,8 +140,8 @@ $$ w_{MLE} =
   0.779 \\
   1.174
 \end{bmatrix}$$
-
 where $w$ is the actual weight vector and $w_{MLE}$ is the maximum likelihood estimated weight vector.
+
 \begin{figure}[width=\linewidth]
 \centering
 \begin{multicols}{2}
@@ -154,14 +152,53 @@ where $w$ is the actual weight vector and $w_{MLE}$ is the maximum likelihood es
 \end{multicols}
 \caption{Linear regression for varying values of M.}
 \end{figure}
+\vspace{3mm}
 
 \section{Ridge regression}
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+As illustrated in the previous section, some values of $M$ can result in overfitting to the training set. Thus, in an attempt to reduce overfitting, we implement ridge regression, which adds a regularization parameter $\lambda$ to the regression function. In this case, we have chosen a regularizer to serve as a weight decay, in order to encourage weight vector values to tend towards zero unless otherwise supported by the data. For any given value of $M$ therefore, with greater weight decay regularization coefficients, the weight vector decays more strongly towards zero. In other words, for higher values of $\lambda$, the data must more strongly support greater weight vector values in order to acehive the same magnitude of coefficients in the weight vector. \\ \\
+This is illustrated in Figure 4, where the first row illustrates the fit of ridge regression using a polynomial basis of degree 3 with $\lambda = 0.1$ and $1$ and the second row shows the fit of the ridge regression using a polynomial basis of degree 10. As illustrated, the weight vector coefficients in the regression are dampened towards zero with greater values of the regularization coefficient. This is compared with the regression computed with a $\lambda = 0$ to illustrate the decay effect of the regulaization parameter. \\ \\
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,3,01.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,10,01.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,3,1.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,10,1.png}
+\end{multicols}
+\caption{Ridge regression for values of M and $\lambda$.}
+\end{figure}
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+Using additional data sets for validation and testing, we can select for the best $M$ and $\lambda$ parameters in our regression model using a polynomial basis. More specifically, for many combinations of values of $M$ and $\lambda$, the maximum likelihood weight vector $w_{MLE}$ was calculated based on the training data set. Through model selection on the validation data set, the best model and optimal values for $M$ and $\lambda$ were chosen based on the evaluation metric. This optimal regression model was then run on the testing data set to evaluate the performance of the model on the new data. The maximum likelihood weight vectors were generated for all $M \in [0, 10]$ and $\lambda \in \{0, 0.1, 0.2, ..., 1.4, 1.5\}$, and this was performed multiple times with data set A as the training data and data set B as the testing data, as well as vice versa. The performance of the regression model was evaluated using the sum of squared errors (SSE) and the mean squared errors (MSE); qualitatively, both evaluation metrics result in the same conclusions, although quantitatively, some additional information can be gleaned from each evaluation metric. \\ \\
+When data set A was used as the training data and data set B was used as the testing data, the validation step indicated that $M = 2$ and $\lambda=0.0$ yielded the optimal regression model with a minimum SSE of $2.35$ and a minimum MSE of $0.11$. Running this model on the testing data demonstrated that the regression fit the testing data remarkably well, excepting a single outlier in the testing data. Thus, despite a relatively low MSE of $2.58$ on the testing data, the SSE was relatively high at $25.75$ due to the significant error in the outlier data point. The training, validation, and testing steps are illustrated in Figure 6, in which the best regression line chosen in model selection is plotted against each data set used for training, validation, and testing, respectively. \\ \\
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P3/training,training_a,testing_b.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/testing,training_a,testing_b.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/validation,training_a,testing_b.png}
+\end{multicols}
+\caption{Training on data A, testing on data B.}
+\end{figure}
+
+When data set B was used as the training data and data set A was used as the testing data, the validation step indicated that $M = 3$ and $\lambda=0.6$ gave the optimal regression model with a minimum SSE of $28.10$ and minimum MSE of $1.28$. In this case, as the model and maximum likelihood weight vectors were computed based on the data set with the outlier data point, the model was trained to try to account for this outlier data point as well. Thus, during the validation step during model selection, the minimum SSE and MSE were significantly greater than when the data set without the outlier was used for training. This can additionally be seen in the testing step, in which the SSE was $40.09$ and the MSE was $3.08$. This regression model on the training, validation, and testing data sets is again visualized in Figure 7. \\ \\
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P3/training,training_b,testing_a.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/testing,training_b,testing_a.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/validation,training_b,testing_a.png}
+\end{multicols}
+\caption{Training on data B, testing on data A.}
+\end{figure}
+
+Under both evaluation metrics (SSE and MSE), we can conclude that the polynomial basis yielded better linear regression when trained on data set A and tested on data set B. By examining and comparing both metrics however, we can gain additional information regarding the spread of the data and any potential outliers. This makes intuitive sense when considering the roles of training, validation, and testing and allows us to draw conclusions about the relationships and relative importance of each step with respect to each other.
+
+\section{Sparsity and LASSO}
+
 
 
 \end{document}

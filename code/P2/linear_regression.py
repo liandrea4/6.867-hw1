@@ -93,6 +93,18 @@ def make_sse_objective_fn(x, y, list_of_basis_functions):
 
     return sse_objective_fn
 
+def make_mse_objective_fn(x, y, list_of_basis_functions):
+    def sse_objective_fn(weight_vector):
+        regression_fn = get_generic_regression_fn(list_of_basis_functions, weight_vector)
+
+        sse = 0
+        for x_i, y_i in zip(x, y):
+            difference = y_i - regression_fn(x_i)
+            sse += (difference ** 2)
+        return sse / len(x)
+
+    return sse_objective_fn
+
 def make_sse_gradient_fn(x, y, list_of_basis_functions, M):
     def sse_gradient_fn(weight_vector):
         sse_gradient = []
