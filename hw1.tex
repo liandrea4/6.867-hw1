@@ -118,8 +118,8 @@ $$ w_{MLE} =
   0.779 \\
   1.174
 \end{bmatrix}$$
-
 where $w$ is the actual weight vector and $w_{MLE}$ is the maximum likelihood estimated weight vector.
+
 \begin{figure}[width=\linewidth]
 \centering
 \begin{multicols}{2}
@@ -130,14 +130,37 @@ where $w$ is the actual weight vector and $w_{MLE}$ is the maximum likelihood es
 \end{multicols}
 \caption{Linear regression for varying values of M.}
 \end{figure}
+\vspace{3mm}
 
 \section{Ridge regression}
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+As illustrated in the previous section, some values of $M$ can result in overfitting to the training set. Thus, in an attempt to reduce overfitting, we implement ridge regression, which adds a regularization parameter $\lambda$ to the regression function. In this case, we have chosen a regularizer to serve as a weight decay, in order to encourage weight vector values to tend towards zero unless otherwise supported by the data. For any given value of $M$ therefore, with greater weight decay regularization coefficients, the weight vector decays more strongly towards zero. In other words, for higher values of $\lambda$, the data must more strongly support greater weight vector values in order to acehive the same magnitude of coefficients in the weight vector. \\ \\
+This is illustrated in Figure 4, where the first row illustrates the fit of ridge regression using a polynomial basis of degree 3 with $\lambda = 0.1$ and $1$ and the second row shows the fit of the ridge regression using a polynomial basis of degree 10. As illustrated, the weight vector coefficients in the regression are dampened towards zero with greater values of the regularization coefficient. This is compared with the regression computed with a $\lambda = 0$ to illustrate the decay effect of the regulaization parameter.
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,3,01.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,10,01.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,3,1.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/ridge_regression,10,1.png}
+\end{multicols}
+\caption{Ridge regression for values of M and $\lambda$.}
+\end{figure}
 
-We can also instead choose our set of basis functions to be the set of cosine functions, where $\phi_1(x) = \cos(\pi x)$, $\phi_2(x) = \cos(2 \pi x)$, ..., $\phi_M(x) = \cos(M \pi x)$. Interestingly, even when we use the same family of basis functions as used to generate the initial data, due to the noise $\epsilon(x)$ added to our dataset, the maximum likelihood weight vector does not identically match the actual function used. This is visualized for varying values of $M$ in Figure 3.
+Using additional data sets for validation and testing, we can select for the best $M$ and $\lambda$ parameters in our regression model using a polynomial basis. More specifically, for many combinations of values of $M$ and $\lambda$, the maximum likelihood weight vector $w_{MLE}$ was calculated based on the training data set. Through model selection on the validation data set, the best model and optimal values for $M$ and $\lambda$ were chosen based on the evaluation metric. This optimal regression model was then run on the testing data set to evaluate the performance of the model on the new data. The maximum likelihood weight vectors were generated for all $M \in [0, 10]$ and $\lambda \in \{0, 0.1, 0.2, ..., 1.4, 1.5\}$, and this was performed multiple times with data set A as the training data and data set B as the testing data, as well as vice versa. The performance of the regression model was evaluated using the sum of squared errors (SSE) and the mean squared errors (MSE); qualitatively, both evaluation metrics result in the same conclusions, although quantitatively, some additional information can be gleaned from each evaluation metric. \\ \\
+When data set A was used as the training data and data set B was used as the testing data, the validation step indicated that $M = 2$ and $\lambda=0.0$ yielded the optimal regression model with a minimum SSE of $2.35$ and a minimum MSE of $0.11$. Running this model on the testing data demonstrated that the regression fit the testing data remarkably well, excepting a single outlier in the testing data. Thus, despite a relatively low MSE of $2.58$ on the testing data, the SSE was $25.75$ due to the significant error in the outlier data point. The training, validation, and testing steps are illustrated in Figure 6, in which the best regression line chosen in model selection is plotted against each data set used for training, validation, and testing, respectively.
+
+\begin{figure}[width=\linewidth]
+\centering
+\begin{multicols}{2}
+  \includegraphics[width=1.2\linewidth]{code/P3/training,training_a,testing_b.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/validation,training_a,testing_b.png}
+  \includegraphics[width=1.2\linewidth]{code/P3/testing,training_a,testing_b.png}
+\end{multicols}
+\caption{Ridge regression for values of M and $\lambda$.}
+\end{figure}
+
 
 
 \end{document}

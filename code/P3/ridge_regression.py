@@ -1,6 +1,6 @@
 import sys
 sys.path.append('../P2')
-from linear_regression      import calculate_polynomial_phi, plot_regression, get_polynomial_regression_fn, make_sse_objective_fn
+from linear_regression      import calculate_polynomial_phi, plot_regression, get_polynomial_regression_fn, make_sse_objective_fn, make_mse_objective_fn
 from linear_regression      import calculate_mle_weight         as calculate_mle_weight_no_lambda
 from loadFittingDataP2      import getData
 from regressData            import regressAData, regressBData, validateData
@@ -90,8 +90,8 @@ if __name__ == '__main__':
 
 
     ## Train, validate, test
-    data_a = regressAData()
-    data_b = regressBData()
+    data_b = regressAData()
+    data_a = regressBData()
     validate_data = validateData()
 
     x_training, y_training = [ data[0] for data in data_a[0] ], [ data[0] for data in data_a[1] ]
@@ -99,12 +99,16 @@ if __name__ == '__main__':
     x_validate, y_validate = [ data[0] for data in validate_data[0] ], [ data[0] for data in validate_data[1] ]
 
     sse_fn = make_sse_objective_fn(x_validate, y_validate, list_of_basis_functions)
+    sse_fn_testing = make_sse_objective_fn(x_testing, y_testing, list_of_basis_functions)
+    # sse_fn = make_mse_objective_fn(x_validate, y_validate, list_of_basis_functions)
+    # sse_fn_testing = make_mse_objective_fn(x_testing, y_testing, list_of_basis_functions)
 
     w_mles = train_model(x_training, y_training)
     best_M, best_lambda_val, best_w_mle, all_values = validate_models(w_mles, sse_fn)
     best_regression_fn = get_polynomial_regression_fn(best_w_mle)
     print "best_value: ", all_values[(best_M, best_lambda_val)]
     print "best_w_mle: ", best_w_mle
+    print "best testing value: ", sse_fn_testing(best_w_mle)
 
     fns_to_plot = {
         "Best regression": best_regression_fn
@@ -116,13 +120,24 @@ if __name__ == '__main__':
 
 """
 Training a, testing b:
-min_sse: 2.35
-best_w_mle: [ 0.997 0.888 -0.0374 ]
 M=2, lambda=0
+best_w_mle: [ 0.997 0.888 -0.0374 ]
+
+min_sse: 2.35
+testing_sse: 25.753
+min_mse: 0.1067
+testing_mse: 2.575
+
+
 
 Training b, testing a:
-min_sse: 28.095
-best_w_mle: [ 0.728 1.332 -0.184 ]
 M=3, lambda = 0.6
+best_w_mle: [ 0.728 1.332 -0.184 ]
+
+min_sse: 28.095
+testing_sse: 40.087
+min_mse: 1.277
+testing_sse: 3.084
+
 """
 
