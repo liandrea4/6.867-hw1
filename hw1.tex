@@ -73,6 +73,30 @@
 ]
 
 \section{Gradient descent}
+
+We implemented a basic batch gradient descent procedure and applied it to minimize two different objective functions: the negative Gaussian function and the quadratic bowl function. Furthermore, after creating the implementations, we investigated how our choice of starting guess, step size, and convergence criterion/ threshold impacted our resulting solution. \\
+
+Starting guess: \\
+
+In general we saw that starting guess did not have much of an impact on our resulting solution. If the starting guess was farther away from the actual minimum, it simply took the algorithm a bit longer to actually converge. In the end though, the algorithm would converge for both of our objective functions. To the right you can see graphs with starting guesses of various orders of magnitude. \\
+
+Step size: \\
+
+Throughout our research, we discovered that step size actually had a pretty significant impact on our resulting solutions. For example, a step size that was too large would actually result in our gradient descent algorithm diverging instead of converging. This is illustrated in the figure on the right. As we can see, the algorithm oversteps on the first step which causes the norm of the new gradient to be larger than the original gradient norm. This then proceeds to compound at every step which ultimately causes the algorithm to diverge and go to infinity. \\
+
+Convergence criterion/ threshold: \\
+
+In addition to step size, the convergence criterion also has a pretty significant impact on the resulting solution. In general, we find that accuracy is inversely proportional to the convergence criterion while speed is directly proportional to the convergence criterion, which makes intuitive sense. Basically, with a large convergence criterion, the accuracy of the resulting solution is reduced while the algorithm runs to completion faster. On the other hand, with a smaller convergence criterion, the accuracy of the resulting solution is increased while the algorithm takes much longer to complete. \\
+
+In order to make sure that our gradient functions were correct, we created a numerical gradient function so that we could validate the gradients at various points. To calculate the numerical gradients, we utilized the central difference approximation. For the quadratic bowl, it appears that no matter what the difference step was, the numerical gradient always equaled the true gradient. For the negative gaussian, we discovered that by making the difference step smaller, our numerical gradient gained accuracy and became closer to the true gradient. For example, at the point (0,0), the real gradient is [ -1.44009348e-06,   -1.44009348e-06]. The numerical gradient with a difference step of 100 is [ -1.14032986e-08 , -1.14032986e-08]. With a difference step of 10, the numerical gradient is [ -1.37214353e-06,  -1.37214353e-06]. With a difference step of 1, the numerical gradient is [ -1.43939760e-06,  -1.43939760e-06]. And lastly, with a difference step of 0.1, the numerical gradient is [ -1.44008652e-06,  -1.44008652e-06] (almost identical to the real gradient). From a mathematical perspective this makes intuitive sense because the very definition of a derivative is basically the numerical gradient as the difference step approaches 0. \\
+
+In the next part of our research, we utilize two forms of gradient descent in order to try and minimize the following function: \\
+$$J(\theta) = \Sigma_{i}(x^{(i)T}\theta - y^{i})^2$$ \\ 
+
+Like before, we had to be really particular in the convergence criterion and step sizes we chose in order to ensure that the gradient descent converges. For batch gradient descent we chose an initial guess of all $0s$ with a step size of $10^{-6}$ and a convergence criterion of 1. This resulted in a $\theta$ that converged to  [  0.50832359  -2.33986133  -6.31150421   6.80803415  -1.06442692 6.66532056   3.39605963  -0.45908695 -12.94348103  15.73213395], which ultimately gave a minimum $J(\theta)$ of 8343.21291982. \\
+
+In our stochastic gradient descent, we used the Robbins-Monro conditions in order to guarantee convergence. Specifically, we chose a $t$ value of $0.75$ and a $\gamma_{0}$ value of $10^{8}$. In terms of accuracy, it seems that the batch gradient descent is a bit more accurate. In terms of total number of evaluations, it also seems that the batch gradient has less.     
+ 
 \label{submission}
 
 As in the past few years, ICML will rely exclusively on

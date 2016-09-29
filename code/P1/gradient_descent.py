@@ -78,18 +78,22 @@ def make_quadratic_bowl_derivative(A, b):
 
 def make_numeric_gradient_calculator(f, delta):
     def numeric_gradient_calculator(x):
-        original_x = x
+  
         delta1 = float(delta)
 
         length = len(x)
         slopes = [0] * length
         for i in range(length):
+            old_x = numpy.copy(x)
+            old_value = old_x[i] - delta1
             new_x = numpy.copy(x)
-            new_value = new_x[i]+delta1
+            new_value = new_x[i]+ delta1
 
+            numpy.put(old_x, [i], [old_value])
             numpy.put(new_x, [i], [new_value])
 
-            current_slope = (f(new_x) - f(original_x))/delta1
+
+            current_slope = (f(new_x) - f(old_x))/(delta1*2)
             slopes[i] = current_slope
 
         return numpy.array(slopes)
@@ -103,15 +107,23 @@ if __name__ == '__main__':
     step_size = 1000000
     threshold = 0.00000001
 
+    #Setup for negative gaussian
     gaussian_mean = parameters[0]
     gaussian_cov = parameters[1]
     objective_f = make_negative_gaussian(gaussian_mean, gaussian_cov)
     gradient_f = make_negative_gaussian_derivative(objective_f, gaussian_mean, gaussian_cov)
-    print gradient_f(initial_guess)
 
+    #Setup for quadratic bowl
     # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
     # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
-    # print calculate_gradient_numerically(objective_f, initial_guess, 0.1)
+
+    numerical_gradient = make_numeric_gradient_calculator(objective_f, 0.1)
+    
+    print "gradient", gradient_f(initial_guess)
+    print "numerical_gradient", numerical_gradient(initial_guess)
+
+    #
+    
 
     # objective_x = numpy.arange(-50, 50, 0.1)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
@@ -120,10 +132,10 @@ if __name__ == '__main__':
     # print "gradient: ", gradient_f
     # print "numpy gradient: ", numpy.gradient(objective_y)
 
-    previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    print "min_x: ", min_x, "  min_y",  min_y
-    print "number of steps: ", len(previous_values)
+    # previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    # print "min_x: ", min_x, "  min_y",  min_y
+    # print "number of steps: ", len(previous_values)
 
-    plot_gradient_descent(objective_f, previous_values)
+    # plot_gradient_descent(objective_f, previous_values)
 
