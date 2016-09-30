@@ -76,7 +76,7 @@ def plot_regression(x, y, fns_to_plot, title):
 
     # plt.xlabel('x')
     # plt.ylabel('y')
-    plt.legend(fontsize=18)
+    plt.legend(fontsize=18, loc=2)
     plt.title(title, fontsize=20)
     plt.show()
 

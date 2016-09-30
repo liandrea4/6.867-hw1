@@ -4,6 +4,7 @@ from linear_regression      import calculate_polynomial_phi, plot_regression, ge
 from linear_regression      import calculate_mle_weight         as calculate_mle_weight_no_lambda
 from loadFittingDataP2      import getData
 from regressData            import regressAData, regressBData, validateData
+from sklearn                import linear_model
 import matplotlib.pyplot    as plt
 import numpy
 import math
@@ -17,6 +18,18 @@ def calculate_mle_weight(x_vector, y_vector, calculate_phi_fn, M, lambda_val):
     return w_mle
 
 def train_model(x_training, y_training):
+    # lasso_coeffs = {}
+    # M_values = range(0, 11)
+    # lambda_values = [ i * 0.1 for i in range(20) ]
+
+    # for M in M_values:
+    #     for lambda_val in lambda_values:
+    #         lasso_model = linear_model.Ridge(alpha=lambda_val)
+    #         x_matrix = calculate_polynomial_phi(x_training, M)
+    #         lasso_model.fit(x_matrix, y_training)
+    #         lasso_coeffs[(lambda_val, M)] = lasso_model.coef_
+    # return lasso_coeffs
+
     w_mles = {}
     M_values = range(0, 11)
     lambda_values = [ i * 0.1 for i in range(20) ]
@@ -72,50 +85,50 @@ if __name__ == '__main__':
 
     ## Maximum likelihood calculations
 
-    # w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M, lambda_val)
-    # regression_fn = get_polynomial_regression_fn(w_mle)
-    # print "w_mle: ", w_mle
+    w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M, lambda_val)
+    regression_fn = get_polynomial_regression_fn(w_mle)
+    print "w_mle: ", w_mle
 
-    # w_mle_no_lambda = calculate_mle_weight_no_lambda(x, y, calculate_polynomial_phi, M)
-    # regression_fn_no_lambda = get_polynomial_regression_fn(w_mle_no_lambda)
-    # print "w_mle_no_lambda: ", w_mle_no_lambda
+    w_mle_no_lambda = calculate_mle_weight_no_lambda(x, y, calculate_polynomial_phi, M)
+    regression_fn_no_lambda = get_polynomial_regression_fn(w_mle_no_lambda)
+    print "w_mle_no_lambda: ", w_mle_no_lambda
 
-    # graph_title = "Linear regression (M=" + str(M) + ", lambda=" + str(lambda_val) + ")"
-    # fns_to_plot = {
-    #     "Actual": real_fn,
-    #     "Linear regression": regression_fn,
-    #     "Ridge regression": regression_fn_no_lambda
-    # }
-    # plot_regression(x, y, fns_to_plot, graph_title)
+    graph_title = "Linear regression (M=" + str(M) + ", lambda=" + str(lambda_val) + ")"
+    fns_to_plot = {
+        "Actual": real_fn,
+        "Linear regression": regression_fn_no_lambda,
+        "Ridge regression": regression_fn
+    }
+    plot_regression(x, y, fns_to_plot, graph_title)
 
 
     ## Train, validate, test
-    data_b = regressAData()
-    data_a = regressBData()
-    validate_data = validateData()
+    # data_a = regressAData()
+    # data_b = regressBData()
+    # validate_data = validateData()
 
-    x_training, y_training = [ data[0] for data in data_a[0] ], [ data[0] for data in data_a[1] ]
-    x_testing, y_testing = [ data[0] for data in data_b[0] ], [ data[0] for data in data_b[1] ]
-    x_validate, y_validate = [ data[0] for data in validate_data[0] ], [ data[0] for data in validate_data[1] ]
+    # x_training, y_training = [ data[0] for data in data_a[0] ], [ data[0] for data in data_a[1] ]
+    # x_testing, y_testing = [ data[0] for data in data_b[0] ], [ data[0] for data in data_b[1] ]
+    # x_validate, y_validate = [ data[0] for data in validate_data[0] ], [ data[0] for data in validate_data[1] ]
 
-    sse_fn = make_sse_objective_fn(x_validate, y_validate, list_of_basis_functions)
-    sse_fn_testing = make_sse_objective_fn(x_testing, y_testing, list_of_basis_functions)
-    # sse_fn = make_mse_objective_fn(x_validate, y_validate, list_of_basis_functions)
-    # sse_fn_testing = make_mse_objective_fn(x_testing, y_testing, list_of_basis_functions)
+    # sse_fn = make_sse_objective_fn(x_validate, y_validate, list_of_basis_functions)
+    # sse_fn_testing = make_sse_objective_fn(x_testing, y_testing, list_of_basis_functions)
+    # # sse_fn = make_mse_objective_fn(x_validate, y_validate, list_of_basis_functions)
+    # # sse_fn_testing = make_mse_objective_fn(x_testing, y_testing, list_of_basis_functions)
 
-    w_mles = train_model(x_training, y_training)
-    best_M, best_lambda_val, best_w_mle, all_values = validate_models(w_mles, sse_fn)
-    best_regression_fn = get_polynomial_regression_fn(best_w_mle)
-    print "best_value: ", all_values[(best_M, best_lambda_val)]
-    print "best_w_mle: ", best_w_mle
-    print "best testing value: ", sse_fn_testing(best_w_mle)
+    # w_mles = train_model(x_training, y_training)
+    # best_M, best_lambda_val, best_w_mle, all_values = validate_models(w_mles, sse_fn)
+    # best_regression_fn = get_polynomial_regression_fn(best_w_mle)
+    # print "best_value: ", all_values[(best_M, best_lambda_val)]
+    # print "best_w_mle: ", best_w_mle
+    # print "best testing value: ", sse_fn_testing(best_w_mle)
 
-    fns_to_plot = {
-        "Best regression": best_regression_fn
-    }
-    plot_regression(x_training, y_training, fns_to_plot, "Training, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
-    plot_regression(x_validate, y_validate, fns_to_plot, "Validation, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
-    plot_regression(x_testing, y_testing, fns_to_plot, "Testing, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
+    # fns_to_plot = {
+    #     "Best regression": best_regression_fn
+    # }
+    # plot_regression(x_training, y_training, fns_to_plot, "Training, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
+    # plot_regression(x_validate, y_validate, fns_to_plot, "Validation, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
+    # plot_regression(x_testing, y_testing, fns_to_plot, "Testing, M=" + str(best_M) + ", lambda=" + str(best_lambda_val))
 
 
 """
