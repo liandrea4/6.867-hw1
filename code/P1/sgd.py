@@ -47,7 +47,7 @@ def make_single_point_least_square_error_2(x, y):
     return single_point_least_square_error_2
 
 def calc_next_theta(old_theta, x, y, t):
-    t0 = 10**8
+    t0 = 10**6
     k = 0.75
     n = lambda t: (t0 + t)**(-k)
     gradient = 2 * numpy.dot(numpy.dot(numpy.matrix.transpose(x), old_theta) - y, x)
@@ -93,11 +93,9 @@ def plot_data(previous_values, x_channel):
     plt.show()
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    step_size = 10**(-7)
-=======
+
     step_size = 10**(-6)
->>>>>>> 4387e0f79fdfab7cdca7d14c724f6088067c6e81
+
     threshold = 1
     x_channel = 1
 
@@ -114,17 +112,17 @@ if __name__ == '__main__':
     # calc_next_theta(theta, x_matrix[0], y_vector[0], 2.0)
     # print gradient_f(theta)
 
-    previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
-    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-
-    # previous_values = sgd(x_matrix, y_vector, theta, single_point_objective_f, threshold)
+    # previous_values = gradient_descent(objective_f, gradient_f, theta, step_size, threshold)
     # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+
+    previous_values = sgd(x_matrix, y_vector, theta, single_point_objective_f, threshold)
+    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
 
     print "min_x: ", min_x, "  min_y",  min_y
     print "number of steps: ", len(previous_values)
 
     plot_data(previous_values, x_channel)
-
+    print len(y_vector)
 
 
 
