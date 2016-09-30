@@ -145,7 +145,7 @@ def make_single_point_least_square_error(list_of_basis_functions):
     return single_point_least_square_error
 
 def calc_next_theta(old_theta, x, y, t, gradient):
-    t0 = 1000
+    t0 = 100
     k = 0.6
     n = lambda t: (t0 + t)**(-k)
     print "n: ", n(t), "   gradient: ", gradient(old_theta)
@@ -200,7 +200,7 @@ if __name__ == '__main__':
 
     ## Maximum likelihood calculations
 
-    # w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M)
+    w_mle = calculate_mle_weight(x, y, calculate_polynomial_phi, M)
     # regression_fn = get_polynomial_regression_fn(w_mle)
     # fns_to_plot = {
     #     "Actual": real_fn,
@@ -208,44 +208,45 @@ if __name__ == '__main__':
     # }
     # plot_regression(x, y, fns_to_plot, "Linear regression (M=" + str(M) + ")")
 
+    #Cosine Regression
+    # w_mle = calculate_mle_weight(x, y, calculate_cosine_phi, M)
+    # regression_fn = get_cosine_regression_fn(w_mle)
+    # fns_to_plot = {
+    #     "Actual": real_fn,
+    #     "Cosine regression": regression_fn
+    # }
+    # plot_regression(x, y, fns_to_plot, "Cosine regression (M=" + str(M) + ")")
 
-    w_mle = calculate_mle_weight(x, y, calculate_cosine_phi, M)
-    regression_fn = get_cosine_regression_fn(w_mle)
-    fns_to_plot = {
-        "Actual": real_fn,
-        "Cosine regression": regression_fn
-    }
-    plot_regression(x, y, fns_to_plot, "Cosine regression (M=" + str(M) + ")")
-
-    print "w_mle: ", w_mle
+    # print "w_mle: ", w_mle
 
 
     ## Gradient descent
-    # weight_vector = numpy.array([2.0] * (M+1))
-    # step_size = 0.05
-    # threshold = 0.0001
+    weight_vector = numpy.array([100.0] * (M+1))
+    step_size = 0.06
+    threshold = 0.0001
 
-    # single_point_objective_f = make_single_point_least_square_error(list_of_basis_functions)
+    single_point_objective_f = make_single_point_least_square_error(list_of_basis_functions)
 
     # # print "first value", single_point_objective_f(x[0], y[0], [ 1.67582053, 1.78700602, 1.84132746])
     # # print "second value", single_point_objective_f(x[0], y[0], [ 0.01558979, 0.54846317,  0.91947502])
 
 
-    # objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
-    # gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
-    # numeric_gradient = make_numeric_gradient_calculator(objective_f, 0.001)
+    objective_f = make_sse_objective_fn(x, y, list_of_basis_functions)
+    gradient_f = make_sse_gradient_fn(x, y, list_of_basis_functions, M)
+    numeric_gradient = make_numeric_gradient_calculator(objective_f, 0.00001)
 
     # print "length", len(x)
 
-    # previous_values = sgd(x, y, weight_vector, single_point_objective_f, threshold, numeric_gradient)
+    previous_values = sgd(x, y, weight_vector, single_point_objective_f, threshold, numeric_gradient)
+    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+
+    print "gradient", gradient_f(weight_vector)
+    print "numeric gradient", numeric_gradient(weight_vector)
+
+    # previous_values = gradient_descent(objective_f, numeric_gradient, weight_vector, step_size, threshold)
     # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    print "min_x: ", min_x, "  min_y",  min_y
+    print "number of steps: ", len(previous_values)
+    print "w_mle: ", w_mle
 
-    # # # print "gradient", gradient_f(w_mle)
-    # # print "numeric gradient", numeric_gradient(weight_vector)
-
-    # # # previous_values = gradient_descent(objective_f, numeric_gradient, weight_vector, step_size, threshold)
-    # # # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    # print "min_x: ", min_x, "  min_y",  min_y
-    # print "number of steps: ", len(previous_values)
-    # print "w_mle: ", w_mle
-    # plot_data(previous_values, 0)
+    plot_data(previous_values, 0)
