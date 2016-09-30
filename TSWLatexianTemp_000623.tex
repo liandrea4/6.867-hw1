@@ -118,7 +118,7 @@ In stochastic gradient descent, instead of evaluating all training data in every
 $$\theta_{t+1} = \theta_{t} - \eta_{t}\nabla_{\theta}J(\theta_t; x^{(i)}, y^{(i)}),$$
 we define
 $$\eta_t = (\tau_0 + t)^{-\kappa}$$
-where $\kappa = 0.75$ and $\tau_{0} = 10^{8}$. We considered our convergence criterion to be when the change in each sample update was smaller than some threshold value for all samples in the data set. In other words, for a given round of evaluating the stochastic gradient descent, changes for all data samples needed to be within the threshold cutoff in order to terminate the algorithm. Batch and stochastic gradient descent are illustrated in Figure 2, with a starting guess of 0, step size of $10^{-6}$, and threshold value of 1.
+where $\kappa = 0.75$ and $\tau_{0} = 10^{8}$. We considered our convergence criterion to be when the change in each sample update was smaller than some threshold value for all samples in the data set. In other words, for a given round of evaluating the stochastic gradient descent, changes for all data samples needed to be within the threshold cutoff in order to terminate the algorithm. Batch and stochastic gradient descent are illustrated in Figure 2, with a starting guess of 0, step size of $10^{-6}$, and threshold value of 1. In terms of accuracy (which was derived from comparison with the closed-form solution) we saw that both batch and SGD were able to converge to values with $0.1$ of the true ones. The big difference between the two methods was in number of single point evaluations. In batch gradient descent there were 12800 single step evaluations while in SGD there were only 728 single step evaluations.
 
 \begin{figure}[width=\linewidth]
 \centering

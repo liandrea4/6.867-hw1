@@ -32,15 +32,14 @@ def plot_gradient_descent(objective_f, previous_values):
             break
         ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
 
-<<<<<<< HEAD
+
     objective_x = numpy.arange(-120, 40, 0.2)
-=======
-    objective_x = numpy.arange(0, 20, 0.1)
->>>>>>> 4387e0f79fdfab7cdca7d14c724f6088067c6e81
+
+
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
     objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
     plt.plot(objective_x, objective_y, 'b-', linewidth=2)
-    plt.title("Negative gaussian, threshold: 1e-6", fontsize=20)
+    plt.title("Negative gaussian, starting guess: -65", fontsize=20)
 
 
     plt.show()
@@ -113,13 +112,10 @@ if __name__ == '__main__':
     initial_guess = numpy.array([-65.0, -65.0])
 
     # Parameters for negative gaussian
-<<<<<<< HEAD
+
     step_size = 100000000
     threshold = 0.00001
-=======
-    step_size = 1000000
-    threshold = 0.000001
->>>>>>> 4387e0f79fdfab7cdca7d14c724f6088067c6e81
+
 
     #Setup for negative gaussian
     gaussian_mean = parameters[0]
