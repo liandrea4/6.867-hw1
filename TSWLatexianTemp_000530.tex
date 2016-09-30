@@ -78,26 +78,13 @@
 In this section, we explored the simplest and most-commonly discussed method of optimization for differentiable cost functions: gradient descent. We implemented a basic batch gradient descent procedure and applied it to minimize two different objective functions: the negative Gaussian function and the quadratic bowl function. Furthermore, after creating the implementations, we investigated how our choice of starting guess, step size, and convergence criterion/threshold impacted our resulting solution.
 
 \subsection{Starting guess}
-In general, we saw that starting guess did not have much of an impact on our resulting solution. If the starting guess was farther away from the actual minimum, it simply took the algorithm more iterations to converge. In the end however, the algorithm would converge for both of our objective functions. It is worth noting however that for alternative objective functions with behavior including plateaus or local minima, starting guess would likely play a larger role. The first row of Figure 1 illustrates two choices of starting guess: 0, which is closer to the minimum, and 30, which is farther from the minimum and thus requires more iterations. In both scenarios however, the minimum is eventually reached.
-
-\begin{figure}[width=\linewidth]
-\centering
-\begin{multicols}{2}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,starting0.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,stepsize1e6.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,threshold1e-8.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,starting30.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,stepsize1e7.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/negative_gaussian,threshold1e-6.png}
-\end{multicols}
-\caption{Starting guesses, step sizes, and thresholds.}
-\end{figure}
+In general, we saw that starting guess did not have much of an impact on our resulting solution. If the starting guess was farther away from the actual minimum, it simply took the algorithm more iterations to converge. In the end however, the algorithm would converge for both of our objective functions. It is worth noting however that for alternative objective functions with behavior including plateaus or local minima, starting guess would likely play a larger role. Figure 1 illustrates gradient descent on our two objective functions with starting guesses of various orders of magnitude.
 
 \subsection{Step size}
-Throughout our research, we discovered that step size had a fairly significant impact on the resulting solutions. For example, a step size that was too large could result in the gradient descent algorithm diverging to infinity instead of converging. In this case, the algorithm would overstep the minimum on the first step, thus causing the norm of the new gradient to be larger than the original gradient norm. This would then proceed to compound at every step, ultimately causing the algorithm to diverge to infinity. Conversely, extremely small step sizes resulted in single-approach convergence, in which the gradient was always negative or always positive as we approached the minimum. For step sizes between these two extremes, the guesses oscillated as we approached the minimum, in which the gradient alternated between positive and negative and eventually converged on the minimum (Figure 1, second row).
+Throughout our research, we discovered that step size had a fairly significant impact on the resulting solutions. For example, a step size that was too large could result in the gradient descent algorithm diverging instead of converging. This is illustrated in Figure 2 on the right. As we can see, the algorithm oversteps the minimum on the first step which causes the norm of the new gradient to be larger than the original gradient norm. This then proceeded to compound at every step, ultimately causing the algorithm to diverge to infinity.
 
 \subsection{Convergence criterion/threshold}
-In addition to step size, the convergence criterion had a fairly significant impact on the resulting solution. In general, we found that accuracy was inversely proportional to the convergence criterion while speed (and inversely number of iterations) was directly proportional to the convergence criterion. With a large convergence criterion, the accuracy of the resulting solution was reduced while the algorithm ran to completion faster. On the other hand, with a smaller convergence criterion, the accuracy of the resulting solution was increased while the algorithm took many more iterations to complete (third row of Figure 1). \\ \\
+In addition to step size, the convergence criterion had a fairly significant impact on the resulting solution. In general, we found that accuracy was inversely proportional to the convergence criterion while speed was directly proportional to the convergence criterion, which makes intuitive sense. With a large convergence criterion, the accuracy of the resulting solution was reduced while the algorithm ran to completion faster. On the other hand, with a smaller convergence criterion, the accuracy of the resulting solution was increased while the algorithm took many more iterations to complete. \\ \\
 
 In order to verify that our gradient functions were correct, we created a numerical gradient function so that we could validate the gradients at various points. To calculate the numerical gradients, we utilized the central difference approximation. For the quadratic bowl, it appears that no matter what the difference step was, the numerical gradient was always identical to the true gradient. For the negative gaussian, we discovered that by making the difference step smaller, our numerical gradient gained accuracy and became closer to the true gradient. For example, at the point (0,0), the real gradient for the negative Gaussian was $$[ \num{-1.44009348e-06}, \num{-1.44009348e-06}].$$
 The numerical gradient with a difference step of 100 was $$[ \num{-1.14032986e-08} , \num{-1.14032986e-08}].$$
@@ -111,22 +98,11 @@ $$J(\theta) = \Sigma_{i}(x^{(i)T}\theta - y^{i})^2$$
 
 As before, we had to be very particular in the convergence criterion and step sizes in order to ensure that the gradient descent converged. For batch gradient descent, we chose an initial guess of all $0$'s with a step size of $10^{-6}$ and a convergence criterion of 1. This resulted in a $\theta$ that converged to [0.50832359, -2.33986133, -6.31150421, 6.80803415, -1.06442692, 6.66532056, 3.39605963, -0.45908695, -12.94348103, 15.73213395], which ultimately gave a minimum $J(\theta)$ of $8343.21291982$. \\ \\
 
-In stochastic gradient descent, instead of evaluating all training data in every parameter update, each update was based on a single training sample. When specifying the learning rate for each step, we used the Robbins-Monro conditions in order to guarantee convergence. Specifically, in our update rule
+In stochastic gradient descent, instead of evaluating all training data in every parameter update, each update is based on a single training sample. When specifying the learning rate for each step, we used the Robbins-Monro conditions in order to guarantee convergence. Specifically, in our update rule
 $$\theta_{t+1} = \theta_{t} - \eta_{t}\nabla_{\theta}J(\theta_t; x^{(i)}, y^{(i)}),$$
 we define
 $$\eta_t = (\tau_0 + t)^{-\kappa}$$
-where $\kappa = 0.75$ and $\tau_{0} = 10^{8}$. We considered our convergence criterion to be when the change in each sample update was smaller than some threshold value for all samples in the data set. In other words, for a given round of evaluating the stochastic gradient descent, changes for all data samples needed to be within the threshold cutoff in order to terminate the algorithm. Batch and stochastic gradient descent are illustrated in Figure 2, with a starting guess of 0, step size of $10^{-6}$, and threshold value of 1.
-
-\begin{figure}[width=\linewidth]
-\centering
-\begin{multicols}{2}
-  \includegraphics[width=1.2\linewidth]{code/P1/batch_gradient_descent.png}
-  \includegraphics[width=1.2\linewidth]{code/P1/sgd.png}
-\end{multicols}
-\caption{Batch and stochastic gradient descent.}
-\end{figure}
-
-In terms of accuracy, the batch gradient descent was generally more accurate than the stochastic gradient descent. However, in terms of the number of evaluations, the stochastic requires fewer iterations per parameter update. This is because in each iteration of batch gradient descent, $n$ evaluations are necessary, compared with stochastic gradient descent which evaluates the a single point-wise gradient per update iteration. Overall however, we found that batch gradient descent required fewer overall evaluations than stochastic gradient descent.
+where $\kappa = 0.75$ and $\tau_{0} = 10^{8}$. In terms of accuracy, the batch gradient descent was generally more accurate than the stochastic gradient descent. However, in terms of the number of evaluations, the stochastic requires fewer iterations per parameter update. This is because in each iteration of batch gradient descent, $n$ evaluations are necessary, compared with stochastic gradient descent which evaluates the a single point-wise gradient per update iteration. Overall however, we found that batch gradient descent required fewer overall evaluations than stochastic gradient descent.
 
 \section{Linear basis function regression}
 
@@ -243,38 +219,16 @@ When data set B was used as the training data and data set A was used as the tes
 Under both evaluation metrics (SSE and MSE), we can conclude that the polynomial basis yielded better linear regression when trained on data set A and tested on data set B. By examining and comparing both metrics however, we can gain additional information regarding the spread of the data and any potential outliers. This makes intuitive sense when considering the roles of training, validation, and testing and allows us to draw conclusions about the relationships and relative importance of each step with respect to each other.
 
 \section{Sparsity and LASSO}
-In this section of our research, we begin to tackle problems in which the closed-form solutions do not exist. In this case, we specifically used the LASSO estimator to approximate sparse weights for a dataset generated by the function
-$$y = w^{T}_{true}\phi(x)+\epsilon,$$
-(where $\epsilon$ is a small amount of noise), working with a sin basis of the form:
-$$\phi(x) = (x, \sin(0.4\pi x \times 1), \sin(0.4\pi x \times 2), ... , \sin(0.4\pi x \times 12))$$
+In this section of our research, we begin to tackle problems where the closed-form solutions do not exist. Specifically, we use the LASSO estimator to try and estimate the true weights for a dataset generated by the following function: \\ 
 
-By using LASSO with varying values of $\lambda$, we can seek to optimize our resulting weight vector for the sine basis with respect to sparseness. Sparseness, the property in which there are few non-zero components of the weight vector, is of particular interest to us because it minimizes the ability for the weight vector to overfit the data. Furthermore, as a sparse feature vector is weighted by some but not all components, it is less suspectible to noise in the data. In this case, LASSO is able to attain sparseness by making the regularization penalty $\lambda$ use the $L_1$ norm. \\ \\
+$$y = w^{T}_{true}\phi(x)+\epsilon$$ (The $\epsilon$ simply represents small noise. Furthermore, the feature vector is give by the following equation:\\
 
-We used the \texttt{sklearn} package to implement LASSO, and we found that we were indeed able to produce a sparse approximated weight vector for the data: [0, 0, 5.411, 0.476, 0, 0.994, 2.357, 0, 0, 0, 0, 0, 0]. Comparing this with the true weight vector $w^{T}_{true}$, which was given as [0, 0, 5.646, 0.779, 0, 0.811, 2.683, 0, 0, 0, 0, 0, 0], we can see that in both weight vectors, there are only four non-zero components. In contrast, when $\lambda = 0$, we get a weight vector in which all component weights are non-zero. \\ \\
+$$\phi(x) = (x,sin(0.4\pi x \times 1), sin(0.4\pi x \times 2), . . . , sin(0.4\pi x \times 12))$$\\
 
-Figure 7 outlines the results of these various approaches for different values of $\lambda$. At $\lambda = 0.1$, the LASSO curve approximates the actual curve surprisingly well despite minor differences. For $\lambda = 0$, in which the regularization penalty is not taken into account, the resulting curve has higher variability and tries to overfit the data too much. Thus, despite not having a closed-form solution in this scenario, we can employ LASSO and principles of sparsity to still generate an acceptable approximation and regression of the data. \\ \\
+The true parameter $w^{T}_{true}$ was given to us as [0.000000000000000000e+00 0.000000000000000000e+00 5.646300000000000100e+00 7.785999999999999600e-01 0.000000000000000000e+00 8.108999999999999500e-01 2.682700000000000100e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00 0.000000000000000000e+00]. As you can see there are only 4 non-zero components to this vector meaning that it is quite sparse. (Sparseness just means that there are only a few components of the vector that are non-zero and in general sparse weights mean that the algorithm is able to calculate the value of the function faster.  \\
 
-\begin{figure}[width=\linewidth]
-\centering
-\begin{multicols}{2}
-  \includegraphics[width=1.2\linewidth]{code/P4/training,01.png}
-  \includegraphics[width=1.2\linewidth]{code/P4/testing,01.png}
-  \includegraphics[width=1.2\linewidth]{code/P4/validation,01.png}
-\end{multicols}
-\caption{LASSO with varying values of lambda.}
-\end{figure}
+The overarching idea was that we would be able to attain the sparseness using LASSO because the regularization penalty used in LASSO is the $L_{1}$ norm. In terms of actual implementation, we decided to use the Lasso function from sklearn. Ultimately, we were indeed able to get a sparse estimation from LASSO. With the following weights: [ need to fill in ] we were able to get a pretty good estimation of the actual curve that was created from the true weights. You can see how similar the graphs are in the pictures on the right.
 
-Comparing ridge regression with LASSO, we can see how both approaches seek to minimize overfitting in our approximation to the data. Unlike ridge regression which minimizes the component weights of the weight vector however, LASSO allows some weights to take values not close to 0 and instead focuses on optimizing for sparseness. These results, comparing ridge regression versus LASSO, are illustrated in Figure 8.
-
-\begin{figure}[width=\linewidth]
-\centering
-\begin{multicols}{2}
-  \includegraphics[width=1.2\linewidth]{code/P4/training,ridge.png}
-  \includegraphics[width=1.2\linewidth]{code/P4/testing,ridge.png}
-  \includegraphics[width=1.2\linewidth]{code/P4/validation,ridge.png}
-\end{multicols}
-\caption{Ridge regression vs. LASSO.}
-\end{figure}
 
 \end{document}
 
