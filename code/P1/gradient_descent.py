@@ -32,7 +32,7 @@ def plot_gradient_descent(objective_f, previous_values):
     #     #     break
     #     ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
 
-    objective_x = numpy.arange(-50, 50, 0.1)
+    objective_x = numpy.arange(-120, 40, 0.2)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
     objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
     plt.plot(objective_x, objective_y, 'b-')
@@ -51,7 +51,10 @@ def make_negative_gaussian(mean, covariance):
 
 def make_negative_gaussian_derivative(negative_gaussian, mean, covariance):
     def negative_gaussian_derivative(x):
-        return numpy.dot(numpy.dot(-negative_gaussian(x), numpy.linalg.inv(covariance)), (x-mean))
+        gradient = numpy.dot(numpy.dot(-negative_gaussian(x), numpy.linalg.inv(covariance)), (x-mean))
+        gradient_norm = numpy.linalg.norm(gradient)
+        print"gradient_norm", gradient_norm
+        return gradient
     return negative_gaussian_derivative
 
 def make_quadratic_bowl(A, b):
@@ -101,11 +104,11 @@ def make_numeric_gradient_calculator(f, delta):
 
 if __name__ == '__main__':
     parameters = getData()
-    initial_guess = numpy.array([0.0, 0.0])
+    initial_guess = numpy.array([-65.0, -65.0])
 
     # Parameters for negative gaussian
-    step_size = 1000000
-    threshold = 0.00000001
+    step_size = 100000000
+    threshold = 0.00001
 
     #Setup for negative gaussian
     gaussian_mean = parameters[0]
@@ -132,10 +135,10 @@ if __name__ == '__main__':
     # print "gradient: ", gradient_f
     # print "numpy gradient: ", numpy.gradient(objective_y)
 
-    # previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    # print "min_x: ", min_x, "  min_y",  min_y
-    # print "number of steps: ", len(previous_values)
+    previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    print "min_x: ", min_x, "  min_y",  min_y
+    print "number of steps: ", len(previous_values)
 
-    # plot_gradient_descent(objective_f, previous_values)
+    plot_gradient_descent(objective_f, previous_values)
 

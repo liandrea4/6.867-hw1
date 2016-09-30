@@ -92,7 +92,7 @@ def plot_data(previous_values, x_channel):
     plt.show()
 
 if __name__ == '__main__':
-    step_size = 10**(-8)
+    step_size = 10**(-7)
     threshold = 1
     x_channel = 1
 
