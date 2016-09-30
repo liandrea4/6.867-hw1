@@ -56,7 +56,7 @@ def calc_next_theta(old_theta, x, y, t):
 
 def sgd(x, y, theta, objective_f, threshold):
     number_of_samples = len(x)
-    
+
     differences = [False]*number_of_samples
     old_jthetas = [0.0] * number_of_samples
     previous_values = []
@@ -88,11 +88,12 @@ def plot_data(previous_values, x_channel):
     # data_x = [ value[x_channel] for value in x_matrix ]
     plt.figure()
     plt.plot(x, y, 'ro')
+    plt.title("Batch gradient descent", fontsize=20)
     # plt.plot(data_x, y_vector, 'bo')
     plt.show()
 
 if __name__ == '__main__':
-    step_size = 10**(-8)
+    step_size = 10**(-6)
     threshold = 1
     x_channel = 1
 
@@ -121,5 +122,5 @@ if __name__ == '__main__':
     plot_data(previous_values, x_channel)
 
 
-   
+
 

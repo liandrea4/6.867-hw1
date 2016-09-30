@@ -26,16 +26,18 @@ def plot_gradient_descent(objective_f, previous_values):
     gradient_descent_x = [ value[0][0] for value in previous_values ]
     gradient_descent_y = [ value[1] for value in previous_values ]
     labels = range(1, len(previous_values) + 1)
-    plt.plot(gradient_descent_x, gradient_descent_y, 'ro')
-    # for i, label in enumerate(labels):
-    #     # if i > 5:
-    #     #     break
-    #     ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
+    plt.plot(gradient_descent_x, gradient_descent_y, 'ro', markersize=8)
+    for i, label in enumerate(labels):
+        if i > 5:
+            break
+        ax.annotate(label, (gradient_descent_x[i], gradient_descent_y[i]))
 
-    objective_x = numpy.arange(-50, 50, 0.1)
+    objective_x = numpy.arange(0, 20, 0.1)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
     objective_y = [ objective_f(numpy.array([x_i, x_i])) for x_i in objective_x ]
-    plt.plot(objective_x, objective_y, 'b-')
+    plt.plot(objective_x, objective_y, 'b-', linewidth=2)
+    plt.title("Negative gaussian, threshold: 1e-6", fontsize=20)
+
 
     plt.show()
 
@@ -78,7 +80,7 @@ def make_quadratic_bowl_derivative(A, b):
 
 def make_numeric_gradient_calculator(f, delta):
     def numeric_gradient_calculator(x):
-  
+
         delta1 = float(delta)
 
         length = len(x)
@@ -105,7 +107,7 @@ if __name__ == '__main__':
 
     # Parameters for negative gaussian
     step_size = 1000000
-    threshold = 0.00000001
+    threshold = 0.000001
 
     #Setup for negative gaussian
     gaussian_mean = parameters[0]
@@ -117,13 +119,13 @@ if __name__ == '__main__':
     # objective_f = make_quadratic_bowl(parameters[2], parameters[3])
     # gradient_f = make_quadratic_bowl_derivative(parameters[2], parameters[3])
 
-    numerical_gradient = make_numeric_gradient_calculator(objective_f, 0.1)
-    
-    print "gradient", gradient_f(initial_guess)
-    print "numerical_gradient", numerical_gradient(initial_guess)
+    # numerical_gradient = make_numeric_gradient_calculator(objective_f, 0.1)
+
+    # print "gradient", gradient_f(initial_guess)
+    # print "numerical_gradient", numerical_gradient(initial_guess)
 
     #
-    
+
 
     # objective_x = numpy.arange(-50, 50, 0.1)
     # objective_x = numpy.arange(min(gradient_descent_x), max(gradient_descent_x), 0.1)
@@ -132,10 +134,10 @@ if __name__ == '__main__':
     # print "gradient: ", gradient_f
     # print "numpy gradient: ", numpy.gradient(objective_y)
 
-    # previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
-    # min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
-    # print "min_x: ", min_x, "  min_y",  min_y
-    # print "number of steps: ", len(previous_values)
+    previous_values = gradient_descent(objective_f, gradient_f, initial_guess, step_size, threshold)
+    min_x, min_y = (previous_values[-1][0], previous_values[-1][1])
+    print "min_x: ", min_x, "  min_y",  min_y
+    print "number of steps: ", len(previous_values)
 
-    # plot_gradient_descent(objective_f, previous_values)
+    plot_gradient_descent(objective_f, previous_values)
 
